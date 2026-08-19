@@ -1,133 +1,89 @@
 # Learning & Blocker Journal — Days 1-2 (GraphQL Solo Recon)
 
-## Day 1 (2026-08-19)
+## Day 1 - August 18, 2026
 
 ### Time Log
-- **10:00 AM - 11:30 AM:** Introduction to GraphQL
-- **11:30 AM - 12:30 PM:** Setting up the project
-- **1:00 PM - 3:00 PM:** Reviewing schema and resolver implementation
-- **3:30 PM - 5:00 PM:** Query testing and troubleshooting
-- **Total Time Spent:** 6 hours
+- **Total Time Spent**: 6 hours
 
-### Activities and Resources
+**09:00 AM - 09:30 AM**: Introduction to GraphQL
+- **Activity**: Watched introductory video on GraphQL.
+- **Resource**: [GraphQL Official Website - Learn GraphQL](https://graphql.org/learn/)
+- **Outcome**: Gained a high-level understanding of what GraphQL is and its core concepts (queries, mutations, subscriptions).
 
-1. **Resource: GraphQL Official Documentation**  
-   Read through the [GraphQL official documentation](https://graphql.org/learn/) to get a fundamental understanding of GraphQL concepts. 
+**09:30 AM - 11:00 AM**: Set Up Development Environment
+- **Activity**: Installed Node.js and set up a new project for the GraphQL mini-prototype.
+- **Instructions Followed**: 
+  1. Installed Node.js.
+  2. Created a new project directory and initialized it using `npm init -y`.
+  3. Installed Apollo Server and GraphQL using `npm install apollo-server graphql`.
+- **Outcome**: Successfully set up the environment without any errors.
 
-   **Aha Moment:** Realized the distinction between query and mutation as well as how GraphQL allows for fetching exactly what a client needs.
+**11:00 AM - 12:30 PM**: Understanding SDL and Resolvers
+- **Activity**: Read tutorials on GraphQL schema definition language (SDL) and basics of resolvers.
+- **Resource**: [How to GraphQL - Schema and Resolvers](https://www.howtographql.com/graphql-js/0-introduction/)
+- **Outcome**: Understood how to define types and resolvers; recognized the importance of the `Query` type.
 
-2. **Setup Project**  
-   Followed instructions to set up a new Node.js project and installed Apollo Server and GraphQL.
-   ```bash
-   mkdir northstar-graphql  
-   cd northstar-graphql  
-   npm init -y  
-   npm install apollo-server graphql  
-   ```
+### Blockers Encountered
+**Blocker 1**: Confusion with GraphQL vs REST
+- **Description**: Struggled to comprehend how GraphQL differs from REST.
+- **Resolution**: Created a side-by-side comparison table summarizing differences, such as over-fetching vs. under-fetching data.
 
-   **Breakthrough:** Successfully set up the project environment by following the instructions without errors.
+**Blocker 2**: Syntax issues with SDL
+- **Description**: Faced issues while writing the schema due to syntax errors.
+- **Error Messages**: Received syntax errors when defining types.
+- **Resolution**: Referenced [GraphQL Specification](https://spec.graphql.org/) for correct SDL syntax. This clarified correct declarations for types and fields.
 
-3. **Schema Review**  
-   Examined the given SDL schema to understand object types and queries relevant to the Northstar Retail Co. inventory.
+**Blocker 3**: Understanding resolvers function
+- **Description**: Initially unclear on how resolvers interact with the data.
+- **Resolution**: Built a sample resolver for a simple array to practice how it pulls data based on queries. This required trial and error, but eventually connected the dots.
 
-   **Blocker: Confusion with Fields and Types**  
-   Didn't initially understand how to correlate the item-specific fields (e.g., `item_id`, `stock`) with their usage in queries.
-   
-   **Resolution:** Referred back to the official documentation and samples. Focused on how to construct queries based on the defined schema.
-
-4. **Writing Sample Queries**  
-   Started writing sample queries based on the schema.
-
-   - **Query to fetch an item by ID:**  
-     ```graphql
-     query {
-       getItem(id: "NSJ001") {
-         item_id
-         name
-         category
-       }
-     }
-     ```
-
-   **Error Encountered:** Received an error related to missing fields in the response when the request was executed.
-
-   **Resolution:** Discovered that my query was incomplete. Adjusted the query to match the fields defined in the schema.
-
-   **Breakthrough:** Successfully fetched data for an item from the inventory, which was exhilarating!
-
-### Blockers and Resolutions
-
-- **Blocker 1: Unable to Get All Items**  
-  Attempted to run a query to get all items but received a null response.  
-  - **Resolution:** Checked my resolver implementation and found that the resolver for `getAllItems` had not been properly set up. After implementing the resolver logic correctly, I was able to retrieve the item list successfully.
-
-- **Blocker 2: Formatting Issues**  
-  Errors occurred during the JSON formatting stage of the query responses.  
-  - **Resolution:** Wrote tests to validate the output in a format I expected against the JSON structure in the documentation. This helped ensure that my queries matched their expected outputs.
-
-- **Blocker 3: Low Stock Query**  
-  The logic to tally low stock items was unclear initially.  
-  - **Resolution:** Returned to the documentation for clarification on implementing filter logics in resolvers. With this understanding, I was able to refine my resolver to return correctly filtered results.
+### Breakthroughs
+- **"Aha" Moment 1**: Realized that the resolver function can be a vital bridge between client queries and server data.
+- **"Aha" Moment 2**: Once I successfully constructed a simple `getAllItems` resolver, it became clear how data flows in GraphQL.
 
 ---
 
-## Day 2 (2026-08-20)
+## Day 2 - August 19, 2026
 
 ### Time Log
-- **9:00 AM - 11:00 AM:** Resuming the project with a focus on creating more complex queries
-- **11:30 AM - 1:00 PM:** Implementing the resolver for getLowStock and getOutOfStock Queries
-- **1:30 PM - 4:00 PM:** Testing all implemented queries and debugging
-- **Total Time Spent:** 6 hours
+- **Total Time Spent**: 5 hours
 
-### Activities and Resources
+**09:00 AM - 10:30 AM**: Build GraphQL Server
+- **Activity**: Developed the GraphQL server implementing resolvers.
+- **Outcome**: Completed the initial setup of the server and defined necessary queries based on the Northstar Retail Co. inventory context.
 
-1. **Resource: GraphQL Tutorials**  
-   Followed [Apollo GraphQL's comprehensive tutorials](https://www.apollographql.com/docs/tutorial/introduction/) to deepen my understanding of Apollo Server.
+**10:30 AM - 12:00 PM**: Test Queries
+- **Activity**: Used GraphQL Playground to write and test queries. 
+- **Queries Tested**: 
+  - `getAllItems`
+  - `getOutOfStock`
+  - `getByCategory(category: "Jacket")`
+- **Outcome**: Successfully retrieved data from the server. Noticed the response structure was as expected.
 
-   **Aha Moment:** Learned how to take advantage of Apollo's features to manage complex data retrieval.
+### Blockers Encountered
+**Blocker 1**: Querying with Incorrect Parameters
+- **Description**: An attempt to fetch items with a non-existent category returned an error.
+- **Error Messages**: GraphQL validation errors due to missing items.
+- **Resolution**: Updated queries and tested them with valid parameters. Verified the existing inventory data.
 
-2. **Building Queries for Different Item Categories**  
-   Created a query to fetch items filtered by categories and stock status.
-   ```graphql
-   query {
-     getLowStock {
-       item_id
-       name
-       stock
-     }
-   }
-   ```
+**Blocker 2**: Understanding Aggregated Queries
+- **Description**: Struggled with writing a query that combines multiple item statuses.
+- **Resolution**: Reviewed how to construct complex queries and successfully implemented a query that fetches both low and out-of-stock items by creating a combined resolver function.
 
-   **Breakthrough:** Successful testing of the query allowed me to visualize inventory status for low stock items.
+**Blocker 3**: Handling CORS issues
+- **Description**: Encountered CORS errors when trying to access the server from certain platforms.
+- **Resolution**: Configured CORS settings in Apollo Server. Modified the server initialization to include CORS handling: 
+  ```javascript
+  const server = new ApolloServer({ typeDefs, resolvers, cors: true });
+  ```
 
-3. **Final Adjustments**  
-   Iterated on my GraphQL implementation to fine-tune the responsiveness of the API.
-   
-   **Blocker: Overwhelmed by Testing**  
-   Felt overwhelmed trying to keep track of which queries had been tested successfully and which hadn’t.
-   - **Resolution:** Created a simple checklist of queries and their expected outputs to streamline the testing process and track progress effectively.
+### Breakthroughs
+- **"Aha" Moment 1**: Realized the power of GraphQL in simplifying data retrieval — needing less effort compared to crafting multiple REST endpoints for different queries.
+- **"Aha" Moment 2**: Successfully executing multiple queries simultaneously demonstrated GraphQL’s efficiency in handling requests.
 
-### Blockers and Resolutions
-
-- **Blocker 1: Failed Queries on Out of Stock Items**  
-  Initially, I tried an incorrect filtering method, leading to incorrect results when querying for out of stock items.
-  - **Resolution:** Reviewed the implementation logic, discovered my filter function was targeting the wrong criteria, and recalibrated to ensure I was filtering based on stock correctly.
-
-- **Blocker 2: Confusion with Asynchronous Handling**  
-  Experienced confusion over whether resolver functions should return raw data or promises.
-  - **Resolution:** Delved into the Apollo documentation and some Stack Overflow threads on best practices for returning data. This provided a clearer understanding of how resolving works asynchronously in GraphQL.
-
-- **Blocker 3: JSON Result Format Issues**  
-  Many of my test responses were yielding unformatted JSON, which made it hard to read.
-  - **Resolution:** Implemented `.pretty()` function in my testing to format the JSON output for better visibility during the testing phase.
-
-### Summary 
-
-- **Key Takeaways:** 
-  - Understanding GraphQL operates differently than REST, especially in terms of how data is structured and requested.
-  - Utilizing resources like documentation and tutorials greatly improved both my comprehension and troubleshooting skills.
-
-- **Total Time Spent (Days 1-2):** 12 hours
-
-- **Self-Assessment of Readiness for Day 3:**
-   I feel equipped to advance to the team build phase, having created a working prototype that connects to the Northstar Retail Co. inventory efficiently using GraphQL. My understanding is strong, and I am prepared to contribute effectively to the next phase of development.
+### Summary
+- **Key Takeaways**: 
+  1. Strong grasp on defining SDL schemas and writing resolvers.
+  2. Improved understanding of how GraphQL servers operate, including query structure and server response formats.
+- **Total Time Spent over 2 Days**: 11 hours
+- **Self-Assessment**: Gained confidence in handling GraphQL fundamentals. Ready for the Day 3 team building, aiming to enhance the prototype with additional functionality and possibly start on mutations.

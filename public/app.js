@@ -1,6 +1,185 @@
-// public/app.js\nasync function fetchGraphQL(query, variables) {\n    const response = await fetch('/graphql', {\n        method: 'POST',\n        headers: {\n            'Content-Type': 'application/json',\n        },\n        body: JSON.stringify({ query, variables }),\n    });\n    return response.json();\n}\n\nconst GET_ALL_ITEMS = `\n    query {\n        getAllItems {\n            item_id\n            name\n            category\n            fabric\n            price\n            stock\n            status\n        }\n    }\n`;
-\n// Additional queries...\nconst GET_ITEM_BY_ID = `\n    query($id: String!) {\n        getItem(id: $id) {\n            item_id\n            name\n            category\n            fabric\n            price\n            stock\n            status\n        }\n    }\n`;
-\nconst GET_BY_CATEGORY = `\n    query($category: String!) {\n        getByCategory(category: $category) {\n            item_id\n            name\n            fabric\n            price\n            stock\n            status\n        }\n    }\n`;
-\nconst GET_OUT_OF_STOCK = `\n    query {\n        getOutOfStock {\n            item_id\n            name\n        }\n    }\n`;
-\nconst GET_LOW_STOCK = `\n    query {\n        getLowStock {\n            item_id\n            name\n        }\n    }\n`;
-\nfunction showSkeletons() {\n    document.querySelector('.inventory-grid').innerHTML = '<div class="skeleton"></div>'; // Add shimmer skeletons\n}\n\nfunction hideSkeletons() {\n    document.querySelector('.skeleton').remove();\n}\n\nfunction renderInventory(items) {\n    const inventoryGrid = document.querySelector('.inventory-grid');\n    inventoryGrid.innerHTML = '';\n    items.forEach(item => {\n        const card = document.createElement('div');\n        card.className = 'inventory-card';\n        card.innerHTML = `\n            <div class="card-header">${item.name}</div>\n            <div class="card-body">\n                <span class="price">${item.price.toFixed(2)} USD</span>\n                <span class="stock">${item.stock} in stock</span>\n                <span class="status ${item.status.toLowerCase()}">${item.status}</span>\n            </div>\n        `;\n        inventoryGrid.appendChild(card);\n    });\n}\n\nfunction renderCarousel(items) {\n    const carousel = document.querySelector('.carousel');\n    carousel.innerHTML = ''; // Clear existing items\n    items.slice(0, 8).forEach(item => {\n        const carouselCard = document.createElement('div');\n        carouselCard.className = 'item';\n        carouselCard.innerHTML = `${item.name} - ${item.price.toFixed(2)} USD`;\n        carousel.appendChild(carouselCard);\n    });\n}\n\n// Stats updating functions\nfunction updateStats(items) {\n    let totalItems = items.length;\n    let inStockCount = items.filter(item => item.stock > 0).length;\n    let lowStockCount = items.filter(item => item.stock <= 20 && item.stock > 0).length;\n    let outOfStockCount = totalItems - inStockCount;\n\n    document.getElementById('total-items-stat').innerText = totalItems;\n    document.getElementById('in-stock-stat').innerText = inStockCount;\n    document.getElementById('low-stock-stat').innerText = lowStockCount;\n    document.getElementById('out-of-stock-stat').innerText = outOfStockCount;\n\n    // Count-up animation to stats\n    let countUp = (element, value) => {\n        let count = 0;\n        let interval = setInterval(() => {\n            count++;\n            element.innerText = count;\n            if (count >= value) clearInterval(interval);\n        }, 50);\n    };\n\n    countUp(document.getElementById('total-items-stat'), totalItems);\n    countUp(document.getElementById('in-stock-stat'), inStockCount);\n    countUp(document.getElementById('low-stock-stat'), lowStockCount);\n    countUp(document.getElementById('out-of-stock-stat'), outOfStockCount);\n}\n\nfunction updateGraphQLPanel(queryName) {\n    const queryPill = document.querySelector(`.query-pill[data-query="${queryName}"]`);\n    queryPill.classList.add('active');\n}\n\n// Load items and render them\nasync function loadAllItems() {\n    showSkeletons();\n    const response = await fetchGraphQL(GET_ALL_ITEMS);\n    hideSkeletons();    \n    renderInventory(response.data.getAllItems);\n    updateStats(response.data.getAllItems);\n}\n\ndocument.addEventListener('DOMContentLoaded', () => {\n    loadAllItems();\n    // Add listeners for tabs and search input...\n});\n
+// public/app.js
+async function fetchGraphQL(query, variables) {
+    const response = await fetch('/graphql', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, variables }),
+    });
+    return response.json();
+}
+
+const GET_ALL_ITEMS = `
+    query {
+        getAllItems {
+            item_id
+            name
+            category
+            fabric
+            price
+            stock
+            status
+        }
+    }
+`;
+
+const GET_ITEM_BY_ID = `
+    query getItem($id: String!) {
+        getItem(id: $id) {
+            item_id
+            name
+            category
+            fabric
+            price
+            stock
+            status
+        }
+    }
+`;
+
+const GET_BY_CATEGORY = `
+    query getByCategory($category: String!) {
+        getByCategory(category: $category) {
+            item_id
+            name
+        }
+    }
+`;
+
+const GET_OUT_OF_STOCK = `
+    query {
+        getOutOfStock {
+            item_id
+            name
+        }
+    }
+`;
+
+const GET_LOW_STOCK = `
+    query {
+        getLowStock {
+            item_id
+            name
+        }
+    }
+`;
+
+function showSkeletons() {
+    document.querySelector('.inventory-grid').classList.add('loading');
+}
+
+function hideSkeletons() {
+    document.querySelector('.inventory-grid').classList.remove('loading');
+}
+
+function renderInventory(items) {
+    const inventoryGrid = document.querySelector('.inventory-grid');
+    inventoryGrid.innerHTML = '';
+    items.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <div class="card-header">${item.name}</div>
+            <div class="card-body">
+                <div class="card-detail">SKU: ${item.item_id}</div>
+                <div class="card-detail">Category: ${item.category}</div>
+                <div class="card-detail">Fabric: ${item.fabric}</div>
+                <div class="card-detail">Price: $${item.price.toFixed(2)}</div>
+                <div class="card-detail">Stock: ${item.stock}</div>
+                <span class="status-badge">${item.status}</span>
+            </div>
+        `;
+        inventoryGrid.appendChild(card);
+
+        if (item.status === 'LOW STOCK') {
+            card.classList.add('low-stock');
+        } else if (item.status === 'OUT OF STOCK') {
+            card.classList.add('out-of-stock');
+        }
+
+        // staggered animation
+        card.style.animationDelay = `${index * 0.1}s`;
+    });
+
+    // Observe for revealing animations
+    const cards = document.querySelectorAll('.card');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    });
+    cards.forEach(card => observer.observe(card));
+}
+
+function renderCarousel(items) {
+    const carousel = document.querySelector('.carousel');
+    carousel.innerHTML = '';
+    items.forEach(item => {
+        const carouselItem = document.createElement('div');
+        carouselItem.className = 'carousel-item';
+        carouselItem.innerHTML = `
+            <h3>${item.name}</h3>
+            <p>$${item.price.toFixed(2)}</p>
+        `;
+        carousel.appendChild(carouselItem);
+    });
+}
+
+function updateStats(items) {
+    const totalItems = document.querySelector('.stats-bar .number[data-count]');
+    totalItems.setAttribute('data-count', items.length);
+    // Count up animations
+    totalItems.innerText = 0;
+    countUp(totalItems, items.length);
+}
+
+function countUp(element, target) {
+    const duration = 2000;
+    const increment = target / (duration / 100);
+    let current = 0;
+
+    const interval = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            clearInterval(interval);
+            current = target;
+        }
+        element.innerText = Math.floor(current);
+    }, 100);
+}
+
+function updateGraphQLPanel(queryName) {
+    let cacheStatus = document.querySelector('.cache-status');
+    let lastSync = document.querySelector('.last-sync');
+    lastSync.innerText = new Date().toLocaleTimeString();
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    showSkeletons();
+    try {
+        const data = await fetchGraphQL(GET_ALL_ITEMS);
+        renderInventory(data.data.getAllItems);
+        hideSkeletons();
+        renderCarousel(data.data.getAllItems.slice(0, 8));
+        updateStats(data.data.getAllItems);
+    } catch (error) {
+        console.error("Fetch failed: ", error);
+    }
+});
+
+document.querySelector('.hamburger').onclick = function() {
+    document.querySelector('.side-drawer').classList.toggle('open');
+};
+
+document.querySelector('.close-btn').onclick = function() {
+    document.querySelector('.side-drawer').classList.remove('open');
+};
+
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+        document.querySelector('.navbar').classList.add('scrolled');
+    } else {
+        document.querySelector('.navbar').classList.remove('scrolled');
+    }
+});

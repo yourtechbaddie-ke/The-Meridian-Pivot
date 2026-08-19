@@ -1,1 +1,346 @@
-/* public/styles.css */\n:root {\n    --deep-midnight-blue: #002366;\n    --vibrant-wisteria: #9B72CF;\n    --burnished-gold: #FFD700;\n    --dark-midnight: #0A0A1A;\n}\n\n* {\n    box-sizing: border-box;\n    margin: 0;\n    padding: 0;\n}\n\nhtml, body {\n    font-family: 'Cormorant Garamond', serif;\n    background: var(--dark-midnight);\n    color: white;\n    scroll-behavior: smooth;\n}\n\nbody::before {\n    content: '';\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n    background: linear-gradient(135deg, var(--deep-midnight-blue), var(--vibrant-wisteria));\n    animation: gradientShift 15s ease infinite;\n    z-index: -1;\n}\n\n@keyframes gradientShift {\n    0% { background-position: 0% 50%; }\n    50% { background-position: 100% 50%; }\n    100% { background-position: 0% 50%; }\n}\n\n.navbar {\n    position: fixed;\n    top: 0;\n    left: 0;\n    right: 0;\n    height: 64px;\n    display: flex;\n    align-items: center;\n    justify-content: space-between;\n    padding: 0 20px;\n    backdrop-filter: blur(12px);\n    transition: background 0.3s;\n    z-index: 1000;\n}\n\n.navbar-logo {\n    font-family: 'Cinzel Decorative', serif;\n    font-size: 1.8rem;\n    color: var(--burnished-gold);\n}\n\n.navbar-center ul {\n    display: flex;\n    gap: 20px;\n    list-style: none;\n}\n\n.navbar-center ul li {\n    cursor: pointer;\n    text-transform: uppercase;\n    font-family: 'Syne', sans-serif;\n}\n\n.navbar-right {\n    cursor: pointer;\n}\n\n.side-drawer {\n    position: fixed;\n    top: 0;\n    right: 0;\n    height: 100vh;\n    width: 300px;\n    background: rgba(155, 114, 207, 0.85);\n    transform: translateX(100%);\n    transition: transform 0.3s ease;\n    z-index: 1100;\n}\n\n.side-drawer.open {\n    transform: translateX(0);\n}\n\n.close-drawer {\n    background: transparent;\n    border: none;\n    font-size: 2rem;\n    color: var(--burnished-gold);\n    cursor: pointer;\n}\n\n.hero-section {\n    display: flex;\n    min-height: 100vh;\n}\n\n.hero-left {\n    flex: 3;\n    position: relative;\n}\n\n.hero-background {\n    background: linear-gradient(-45deg, var(--deep-midnight-blue), var(--vibrant-wisteria));\n    animation: gradientShift 20s ease infinite;\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n    z-index: 1;\n}\n\n.hero-title {\n    font-family: 'Cinzel Decorative', serif;\n    font-size: 4rem;\n    color: var(--burnished-gold);\n    z-index: 2;\n    position: relative;\n    background: linear-gradient(to right, var(--burnished-gold), rgba(255,215,0,0.3));\n    background-clip: text;\n    color: transparent;\n    animation: shimmer 1.5s infinite alternate;\n}\n\n@keyframes shimmer {\n    0% {\n        background-position: 0%;\n    }\n    100% {\n        background-position: 100%;\n    }\n}\n\n.tagline {\n    font-family: 'Cormorant Garamond', serif;\n    font-style: italic;\n    z-index: 2;\n}\n\n.subtitle {\n    font-family: 'Syne', sans-serif;\n    z-index: 2;\n}\n\n.cta-button {\n    padding: 10px 20px;\n    border: 2px solid var(--burnished-gold);\n    background: transparent;\n    color: var(--burnished-gold);\n    cursor: pointer;\n    font-family: 'Syne', sans-serif;\n    text-transform: uppercase;\n    transition: background 0.3s ease;\n}\n\n.cta-button:hover {\n    background: var(--vibrant-wisteria);\n}\n\n.hero-right {\n    flex: 2;\n    padding: 20px;\n}\n\n.dashboard-card {\n    background: rgba(155,114,207,0.15);\n    backdrop-filter: blur(16px);\n    border: 1px solid rgba(255,215,0,0.3);\n    padding: 20px;\n    border-radius: 8px;\n}\n\n.metrics {\n    display: flex;\n    flex-direction: column;\n    gap: 10px;\n}\n\n.metrics .metric {\n    font-family: 'Syne', sans-serif;\n}\n\n.pulse-warning {\n    color: orange;\n    animation: pulse 1s infinite;\n}\n\n.pulse-danger {\n    color: crimson;\n    animation: pulse 1s infinite;\n}\n\n@keyframes pulse {\n    0% { opacity: 0.8; }\n    50% { opacity: 1; }\n    100% { opacity: 0.8; }\n}\n\n.stats-bar {\n    display: flex;\n    justify-content: space-around;\n    padding: 20px 0;\n    background: rgba(0, 0, 0, 0.2);\n}\n\n.stat-card {\n    text-align: center;\n}\n\n.large-number {\n    font-size: 2rem;\n}\n\n.featured-carousel {\n    background: rgba(0, 0, 0, 0.4);\n    padding: 20px;\n}\n\n.carousel {\n    display: flex;\n    overflow-x: auto;\n    gap: 10px;\n}\n\n.carousel .item {\n    background: #002366;\n    border: 1px solid var(--burnished-gold);\n    padding: 20px;\n    border-radius: 8px;\n    filter: url(#f);\n    position: relative;\n    transition: transform 0.3s;\n}\n\n.carousel .item:hover {\n    transform: translateY(-5px);\n}\n\n.collection-title {\n    font-family: 'Cinzel Decorative', serif;\n}\n\n.search-bar {\n    padding: 10px;\n    width: 100%;\n    border: 2px solid var(--burnished-gold);\n    background: rgba(255, 255, 255, 0.1);\n}\n\n.filter-tabs {\n    display: flex;\n    gap: 10px;\n}\n\n.filter-tab {\n    padding: 10px;\n    border-radius: 20px;\n    cursor: pointer;\n    transition: background 0.3s;\n}\n\n.filter-tab.active {\n    background: var(--burnished-gold);\n    color: var(--deep-midnight-blue);\n}\n\n.inventory-grid {\n    display: grid;\n    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));\n    gap: 20px;\n}\n\n.brand-story {\n    display: flex;\n    justify-content: space-around;\n    padding: 30px;\n}\n\n.quote {\n    font-family: 'Playfair Display', serif;\n    font-style: italic;\n}\n\n.graphql-status-panel {\n    background: rgba(155,114,207,0.15);\n    padding: 20px;\n    border-radius: 8px;\n}\n\n.footer {\n    background: var(--dark-midnight);\n    text-align: center;\n    padding: 20px;\n}\n\n.wisteria-line {\n    width: 60%;\n    margin: 10px auto;\n    height: 4px;\n    background: var(--vibrant-wisteria);\n}\n\n/* Media Queries for Responsive Design */\n@media (max-width: 768px) {\n    .hero-section {\n        flex-direction: column;\n    }\n\n    .hero-left, .hero-right {\n        width: 100%;\n    }  \n}\n\n@media (max-width: 480px) {\n    .navbar-center ul {\n        flex-direction: column;\n    }\n}\n
+/* public/styles.css */
+:root {
+    --deep-midnight: #002366;
+    --vibrant-wisteria: #9B72CF;
+    --burnished-gold: #FFD700;
+    --dark-midnight: #0A0A1A;
+    --gold-opacity: rgba(255,215,0,0.3);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    font-family: 'Syne', sans-serif;
+    scroll-behavior: smooth;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, var(--deep-midnight), var(--vibrant-wisteria));
+    opacity: 0.95;
+    z-index: -1;
+    animation: gradientShift 15s ease infinite;
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.3s;
+}
+
+.navbar.scrolled {
+    background: rgba(0, 34, 102, 0.85);
+    backdrop-filter: blur(12px);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-family: 'Cinzel Decorative', serif;
+    color: var(--burnished-gold);
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+.nav-links li {
+    text-transform: uppercase;
+    color: white;
+    cursor: pointer;
+    position: relative;
+}
+
+.nav-links li:hover::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: var(--burnished-gold);
+    left: 0;
+    bottom: -5px;
+    transition: width 0.3s;
+}
+
+.hamburger {
+    cursor: pointer;
+    color: var(--burnished-gold);
+    font-size: 1.5rem;
+}
+
+.side-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100vh;
+    background: rgba(155, 114, 207, 0.75);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 100;
+}
+
+.side-drawer.open {
+    transform: translateX(0);
+}
+
+.close-btn {
+    font-size: 1.5rem;
+    color: var(--burnished-gold);
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin: 1rem;
+}
+
+.hero-section {
+    display: grid;
+    grid-template-columns: 60% 40%;
+    min-height: 100vh;
+    position: relative;
+}
+
+.hero-left {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, var(--deep-midnight), var(--vibrant-wisteria);
+    animation: gradientShift 15s ease infinite;
+}
+
+.hero-left h1 {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 4rem;
+    color: var(--burnished-gold);
+    animation: shimmer 3s linear infinite;
+}
+
+.tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.5rem;
+    color: var(--burnished-gold);
+}
+
+.animated-subtitle {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+    color: #F5F5F5;
+}
+
+.cta-button {
+    padding: 1rem 2rem;
+    border: 2px solid var(--burnished-gold);
+    background: transparent;
+    color: var(--burnished-gold);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.cta-button:hover {
+    background: var(--vibrant-wisteria);
+}
+
+.hero-right {
+    z-index: 1;
+}
+
+.dashboard-card {
+    background: rgba(155, 114, 207, 0.15);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--gold-opacity);
+    padding: 2rem;
+    border-radius: 10px;
+}
+
+.metrics {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 1rem;
+}
+
+.metric {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.number {
+    font-size: 2rem;
+    color: var(--burnished-gold);
+}
+
+.low-stock .number,
+.out-of-stock .number {
+    color: crimson;
+}
+
+.stats-bar {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(255, 215, 0, 0.15);
+    padding: 1rem;
+}
+
+.stat-card {
+    text-align: center;
+    flex: 1;
+    padding: 1rem;
+    background: var(--vibrant-wisteria);
+    margin: 0 1rem;
+}
+
+.featured-carousel {
+    padding: 3rem 1rem;
+}
+
+.collection-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+}
+
+.carousel {
+    display: flex;
+    overflow: hidden;
+    position: relative;
+}
+
+.carousel-item {
+    background: white;
+    border-radius: 10px;
+    margin: 0 1rem;
+    padding: 1rem;
+    transition: transform 0.3s;
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.filter-pill {
+    padding: 0.5rem 1rem;
+    background: var(--vibrant-wisteria);
+    cursor: pointer;
+    border-radius: 20px;
+}
+
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+}
+
+.brand-story {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 2rem;
+}
+
+.story-quote {
+    font-size: 2rem;
+    font-style: italic;
+    padding: 2rem;
+}
+
+.story-text {
+    padding: 2rem;
+}
+
+.graphql-indicator {
+    background: rgba(155, 114, 207, 0.1);
+    padding: 2rem;
+}
+
+.indicators {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.pulse {
+    animation: pulse 1.5s infinite;
+}
+
+footer {
+    background: var(--dark-midnight);
+    padding: 2rem;
+    color: var(--burnished-gold);
+    text-align: center;
+}
+
+.accent-line {
+    border: 0;
+    height: 2px;
+    background: var(--vibrant-wisteria);
+    margin: 1rem 0;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        grid-template-columns: 1fr;
+    }
+
+    .navbar {
+        flex-direction: column;
+    }
+
+    .filter-tabs {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-left h1 {
+        font-size: 2.5rem;
+    }
+
+    .tagline,
+    .animated-subtitle {
+        font-size: 1rem;
+    }
+}

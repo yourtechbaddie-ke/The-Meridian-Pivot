@@ -1,179 +1,135 @@
 # Northstar Retail Co. — Original Polling System (Day 3)
 
-This document outlines the implementation of the original polling service for Northstar Retail Co. This baseline codebase will later pivot into different functionality on Day 4.
+## Complete Server Code
 
-## Complete Code for Polling System
+This code implements a polling system that synchronizes with a simulated warehouse API every 5 minutes. It maintains an in-memory cache of stock levels and exposes REST endpoints to query stock information.
 
 ```javascript
-// Import necessary modules
-const express = require('express'); // Express framework for building APIs
-const cors = require('cors'); // CORS middleware for enabling cross-origin requests
+// Required modules
+const express = require('express');
+const bodyParser = require('body-parser');
 
-// Initialize express app
+// Express app setup
 const app = express();
-app.use(cors());
+app.use(bodyParser.json());
 
-// Mock warehouse data representing the full Northstar inventory
-const warehouseData = [
-  { item_id: "NSJ001", name: "Sovereign Shearling Trench", category: "Jacket", stock: 40, status: "IN STOCK" },
-  { item_id: "NSJ002", name: "Imperial Velvet Evening Blazer", category: "Jacket", stock: 30, status: "IN STOCK" },
-  { item_id: "NSS001", name: "Monarch Chunky Cable Sweater", category: "Sweater", stock: 50, status: "IN STOCK" },
-  { item_id: "NSS002", name: "Celestial Turtleneck Knit", category: "Sweater", stock: 40, status: "IN STOCK" },
-  { item_id: "NSC001", name: "Aura Lounge Hoodie & Pants Set", category: "Cashmere Set", stock: 60, status: "IN STOCK" },
-  { item_id: "NSC002", name: "Ethereal Track Set in Rose Gold", category: "Cashmere Set", stock: 0, status: "OUT OF STOCK" },
-  { item_id: "NSD001", name: "Opulent Backless Gown", category: "Dress", stock: 50, status: "IN STOCK" },
-  { item_id: "NSD002", name: "Seraphina Sequin Mini Dress", category: "Dress", stock: 30, status: "IN STOCK" },
-  { item_id: "NSK001", name: "Aether Pleated Midi Skirt", category: "Skirt", stock: 40, status: "IN STOCK" },
-  { item_id: "NSK002", name: "Obsidian Leather Column Skirt", category: "Skirt", stock: 30, status: "IN STOCK" },
-  { item_id: "NSB001", name: "Luminary Pussy-Bow Blouse", category: "Blouse", stock: 50, status: "IN STOCK" },
-  { item_id: "NSH001", name: "Atelier Tailored Crisp Shirt", category: "Shirt", stock: 60, status: "IN STOCK" },
-  { item_id: "NSW001", name: "Soleil Hand-Crochet Tunic", category: "Crochetwear", stock: 20, status: "LOW STOCK" },
-  { item_id: "NSW002", name: "Riviera Crochet Cardigan", category: "Crochetwear", stock: 0, status: "OUT OF STOCK" },
-  { item_id: "NSJ003", name: "Vanguard Straight-Leg Denim", category: "Denim Jeans", stock: 70, status: "IN STOCK" },
-  { item_id: "NSJ004", name: "Noir Wide-Leg High-Rise Denim", category: "Denim Jeans", stock: 50, status: "IN STOCK" },
-  { item_id: "NSL001", name: "Velour Contour Leggings", category: "Leggings", stock: 60, status: "IN STOCK" },
-  { item_id: "NSR001", name: "Courtside Gold Edition Jersey", category: "Jersey", stock: 40, status: "IN STOCK" },
-  { item_id: "NSR002", name: "Northstar Varsity Mesh Jersey", category: "Jersey", stock: 10, status: "LOW STOCK" },
-  { item_id: "NST001", name: "Apex Leather Low-Top Trainers", category: "Trainers", stock: 50, status: "IN STOCK" },
-  { item_id: "NST002", name: "Runner High-Top Knit Trainer", category: "Trainers", stock: 30, status: "IN STOCK" },
-  { item_id: "NSX001", name: "Signature Ribbed Cashmere Socks", category: "Socks", stock: 80, status: "IN STOCK" },
-  { item_id: "NSX002", name: "Monogram Silk-Blend Dress Socks", category: "Socks", stock: 50, status: "IN STOCK" },
-  { item_id: "NSM001", name: "Crown Slouchy Cashmere Marvin", category: "Marvin/Beanie", stock: 70, status: "IN STOCK" },
-  { item_id: "NSM002", name: "Alpine Ribbed Wool-Cashmere Marvin", category: "Marvin/Beanie", stock: 50, status: "IN STOCK" },
+// Simulated warehouse data representing Northstar's inventory (all 25 items)
+const inventory = [
+  { item_id: 'NSJ001', name: 'Sovereign Shearling Trench', category: 'Jacket', fabric: 'Shearling', price: 2850, stock: 40, status: 'IN STOCK' },
+  { item_id: 'NSJ002', name: 'Imperial Velvet Evening Blazer', category: 'Jacket', fabric: 'Velvet', price: 1950, stock: 30, status: 'IN STOCK' },
+  { item_id: 'NSS001', name: 'Monarch Chunky Cable Sweater', category: 'Sweater', fabric: 'Wool', price: 1200, stock: 50, status: 'IN STOCK' },
+  { item_id: 'NSS002', name: 'Celestial Turtleneck Knit', category: 'Sweater', fabric: 'Knit', price: 880, stock: 40, status: 'IN STOCK' },
+  { item_id: 'NSC001', name: 'Aura Lounge Hoodie & Pants Set', category: 'Cashmere Set', fabric: 'Cashmere', price: 1650, stock: 60, status: 'IN STOCK' },
+  { item_id: 'NSC002', name: 'Ethereal Track Set in Rose Gold', category: 'Cashmere Set', fabric: 'Cashmere', price: 1800, stock: 0, status: 'OUT OF STOCK' },
+  { item_id: 'NSD001', name: 'Opulent Backless Gown', category: 'Dress', fabric: 'Silk', price: 2200, stock: 50, status: 'IN STOCK' },
+  { item_id: 'NSD002', name: 'Seraphina Sequin Mini Dress', category: 'Dress', fabric: 'Sequin', price: 1450, stock: 30, status: 'IN STOCK' },
+  { item_id: 'NSK001', name: 'Aether Pleated Midi Skirt', category: 'Skirt', fabric: 'Cotton', price: 750, stock: 40, status: 'IN STOCK' },
+  { item_id: 'NSK002', name: 'Obsidian Leather Column Skirt', category: 'Skirt', fabric: 'Leather', price: 1100, stock: 30, status: 'IN STOCK' },
+  { item_id: 'NSB001', name: 'Luminary Pussy-Bow Blouse', category: 'Blouse', fabric: 'Silk', price: 620, stock: 50, status: 'IN STOCK' },
+  { item_id: 'NSH001', name: 'Atelier Tailored Crisp Shirt', category: 'Shirt', fabric: 'Cotton', price: 480, stock: 60, status: 'IN STOCK' },
+  { item_id: 'NSW001', name: 'Soleil Hand-Crochet Tunic', category: 'Crochetwear', fabric: 'Cotton', price: 890, stock: 20, status: 'LOW STOCK' },
+  { item_id: 'NSW002', name: 'Riviera Crochet Cardigan', category: 'Crochetwear', fabric: 'Cotton', price: 720, stock: 0, status: 'OUT OF STOCK' },
+  { item_id: 'NSJ003', name: 'Vanguard Straight-Leg Denim', category: 'Denim Jeans', fabric: 'Denim', price: 420, stock: 70, status: 'IN STOCK' },
+  { item_id: 'NSJ004', name: 'Noir Wide-Leg High-Rise Denim', category: 'Denim Jeans', fabric: 'Denim', price: 450, stock: 50, status: 'IN STOCK' },
+  { item_id: 'NSL001', name: 'Velour Contour Leggings', category: 'Leggings', fabric: 'Velour', price: 280, stock: 60, status: 'IN STOCK' },
+  { item_id: 'NSR001', name: 'Courtside Gold Edition Jersey', category: 'Jersey', fabric: 'Polyester', price: 390, stock: 40, status: 'IN STOCK' },
+  { item_id: 'NSR002', name: 'Northstar Varsity Mesh Jersey', category: 'Jersey', fabric: 'Polyester', price: 350, stock: 10, status: 'LOW STOCK' },
+  { item_id: 'NST001', name: 'Apex Leather Low-Top Trainers', category: 'Trainers', fabric: 'Leather', price: 680, stock: 50, status: 'IN STOCK' },
+  { item_id: 'NST002', name: 'Runner High-Top Knit Trainer', category: 'Trainers', fabric: 'Knit', price: 750, stock: 30, status: 'IN STOCK' },
+  { item_id: 'NSX001', name: 'Signature Ribbed Cashmere Socks', category: 'Socks', fabric: 'Cashmere', price: 120, stock: 80, status: 'IN STOCK' },
+  { item_id: 'NSX002', name: 'Monogram Silk-Blend Dress Socks', category: 'Socks', fabric: 'Silk', price: 95, stock: 50, status: 'IN STOCK' },
+  { item_id: 'NSM001', name: 'Crown Slouchy Cashmere Marvin', category: 'Marvin/Beanie', fabric: 'Cashmere', price: 240, stock: 70, status: 'IN STOCK' },
+  { item_id: 'NSM002', name: 'Alpine Ribbed Wool-Cashmere Marvin', category: 'Marvin/Beanie', fabric: 'Wool-Cashmere', price: 190, stock: 50, status: 'IN STOCK' }
 ];
 
-// In-memory cache object for storing stock levels keyed by item_id
-const stockCache = {};
+// In-memory cache to store inventory data for fast access
+let cache = {};
 
-// Function to update stock cache every 5 minutes
-const updateCache = () => {
-  // Update cache with mock warehouse data
-  warehouseData.forEach(item => {
-    stockCache[item.item_id] = {
-      name: item.name,
-      stock: item.stock,
-      status: item.status
-    };
-  });
+// Function to simulate polling the warehouse API every 5 minutes
+const pollWarehouseAPI = () => {
+  console.log("Polling the warehouse API for stock updates...");
+
+  // Simulate fetching data from a warehouse API
+  cache = inventory.reduce((acc, item) => {
+    acc[item.item_id] = { stock: item.stock, status: item.status };
+    return acc;
+  }, {});
+
+  console.log("Inventory cache updated.");
 };
 
-// Initial cache update
-updateCache();
+// Set up polling to run every 5 minutes (300000 milliseconds)
+const pollInterval = setInterval(pollWarehouseAPI, 300000);
 
-// Set an interval to poll the warehouse every 5 minutes (300000 milliseconds)
-// This will be deprecated on Day 4, identified by the comment
-setInterval(() => {
-  console.log("Polling warehouse API and updating stock cache...");
-  updateCache();
-}, 300000); // Poll every 5 minutes
+// Initial call to populate the cache immediately
+pollWarehouseAPI();
 
-// REST endpoint to get stock for a specific item by item_id
+// REST endpoint to get stock for a specific item by its ID
 app.get('/stock/:item_id', (req, res) => {
   const itemId = req.params.item_id;
-  const stockData = stockCache[itemId];
-  
-  // Return stock data if found, otherwise return a 404 error
-  if (stockData) {
-    res.json(stockData);
+  const itemStock = cache[itemId];
+
+  if (itemStock) {
+    res.status(200).json({ item_id: itemId, ...itemStock });
   } else {
-    res.status(404).json({ error: "Item not found" });
+    res.status(404).json({ error: 'Item not found' });
   }
 });
 
-// REST endpoint to get all stock data in cache
+// REST endpoint to get all stock data
 app.get('/stock/all', (req, res) => {
-  res.json(stockCache);
+  res.status(200).json(cache);
 });
 
-// Start the server on port 3000
+// Start the Express server on port 3000
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 ```
 
-## Mock Warehouse API Data
+## Expected Usage
 
-```json
-[
-  { "item_id": "NSJ001", "name": "Sovereign Shearling Trench", "category": "Jacket", "stock": 40, "status": "IN STOCK" },
-  { "item_id": "NSJ002", "name": "Imperial Velvet Evening Blazer", "category": "Jacket", "stock": 30, "status": "IN STOCK" },
-  { "item_id": "NSS001", "name": "Monarch Chunky Cable Sweater", "category": "Sweater", "stock": 50, "status": "IN STOCK" },
-  { "item_id": "NSS002", "name": "Celestial Turtleneck Knit", "category": "Sweater", "stock": 40, "status": "IN STOCK" },
-  { "item_id": "NSC001", "name": "Aura Lounge Hoodie & Pants Set", "category": "Cashmere Set", "stock": 60, "status": "IN STOCK" },
-  { "item_id": "NSC002", "name": "Ethereal Track Set in Rose Gold", "category": "Cashmere Set", "stock": 0, "status": "OUT OF STOCK" },
-  { "item_id": "NSD001", "name": "Opulent Backless Gown", "category": "Dress", "stock": 50, "status": "IN STOCK" },
-  { "item_id": "NSD002", "name": "Seraphina Sequin Mini Dress", "category": "Dress", "stock": 30, "status": "IN STOCK" },
-  { "item_id": "NSK001", "name": "Aether Pleated Midi Skirt", "category": "Skirt", "stock": 40, "status": "IN STOCK" },
-  { "item_id": "NSK002", "name": "Obsidian Leather Column Skirt", "category": "Skirt", "stock": 30, "status": "IN STOCK" },
-  { "item_id": "NSB001", "name": "Luminary Pussy-Bow Blouse", "category": "Blouse", "stock": 50, "status": "IN STOCK" },
-  { "item_id": "NSH001", "name": "Atelier Tailored Crisp Shirt", "category": "Shirt", "stock": 60, "status": "IN STOCK" },
-  { "item_id": "NSW001", "name": "Soleil Hand-Crochet Tunic", "category": "Crochetwear", "stock": 20, "status": "LOW STOCK" },
-  { "item_id": "NSW002", "name": "Riviera Crochet Cardigan", "category": "Crochetwear", "stock": 0, "status": "OUT OF STOCK" },
-  { "item_id": "NSJ003", "name": "Vanguard Straight-Leg Denim", "category": "Denim Jeans", "stock": 70, "status": "IN STOCK" },
-  { "item_id": "NSJ004", "name": "Noir Wide-Leg High-Rise Denim", "category": "Denim Jeans", "stock": 50, "status": "IN STOCK" },
-  { "item_id": "NSL001", "name": "Velour Contour Leggings", "category": "Leggings", "stock": 60, "status": "IN STOCK" },
-  { "item_id": "NSR001", "name": "Courtside Gold Edition Jersey", "category": "Jersey", "stock": 40, "status": "IN STOCK" },
-  { "item_id": "NSR002", "name": "Northstar Varsity Mesh Jersey", "category": "Jersey", "stock": 10, "status": "LOW STOCK" },
-  { "item_id": "NST001", "name": "Apex Leather Low-Top Trainers", "category": "Trainers", "stock": 50, "status": "IN STOCK" },
-  { "item_id": "NST002", "name": "Runner High-Top Knit Trainer", "category": "Trainers", "stock": 30, "status": "IN STOCK" },
-  { "item_id": "NSX001", "name": "Signature Ribbed Cashmere Socks", "category": "Socks", "stock": 80, "status": "IN STOCK" },
-  { "item_id": "NSX002", "name": "Monogram Silk-Blend Dress Socks", "category": "Socks", "stock": 50, "status": "IN STOCK" },
-  { "item_id": "NSM001", "name": "Crown Slouchy Cashmere Marvin", "category": "Marvin/Beanie", "stock": 70, "status": "IN STOCK" },
-  { "item_id": "NSM002", "name": "Alpine Ribbed Wool-Cashmere Marvin", "category": "Marvin/Beanie", "stock": 50, "status": "IN STOCK" }
-]
-```
-## Usage Instructions
-1. **Prerequisites:**
+1. **Running the Server**:
    - Ensure you have Node.js installed on your machine.
-2. **Setup Project:**
-   Create a new directory and navigate into it:
-   ```bash
-   mkdir northstar-polling-service
-   cd northstar-polling-service
-   ```
-3. **Initialize Node.js Project:**
-   ```bash
-   npm init -y
-   ```
-4. **Install Dependencies:**
-   ```bash
-   npm install express cors
-   ```
-5. **Create and Edit the Server File:**
-   Create a file named `server.js` and paste the complete code provided above.
-6. **Run the Server:**
-   Execute the following command:
-   ```bash
-   node server.js
-   ```
-7. **Access the API Endpoints:**
-   - **Get Stock by Item ID:**
-     ```
-     GET http://localhost:3000/stock/{item_id}
-     ```
-     Replace `{item_id}` with the actual item's id (e.g., `NSJ001`).
-
-   - **Get All Stock:**
-     ```
-     GET http://localhost:3000/stock/all
+   - Create a new project directory, navigate into it, and then create a `polling_system.js` file.
+   - Copy the complete server code above into `polling_system.js`.
+   - In your terminal, run:
+     ```bash
+     npm init -y
+     npm install express body-parser
+     node polling_system.js
      ```
 
-8. **Expected Response:**
-   - For a specific item:
+2. **Accessing the Endpoints**:
+   - Open your web browser or a tool like Postman to test the endpoints.
+   - To get stock for a specific item (e.g., `NSJ001`), hit:
+     ```
+     GET http://localhost:3000/stock/NSJ001
+     ```
+     **Expected Response**:
      ```json
      {
        "item_id": "NSJ001",
-       "name": "Sovereign Shearling Trench",
        "stock": 40,
        "status": "IN STOCK"
      }
      ```
-   - For all stock:
+
+   - To get all stock data, hit:
+     ```
+     GET http://localhost:3000/stock/all
+     ```
+     **Expected Response**:
      ```json
      {
-       "NSJ001": { "name": "Sovereign Shearling Trench", "stock": 40, "status": "IN STOCK" },
+       "NSJ001": { "stock": 40, "status": "IN STOCK" },
+       "NSJ002": { "stock": 30, "status": "IN STOCK" },
        ...
+       "NSM002": { "stock": 50, "status": "IN STOCK" }
      }
      ```
-This concludes the implementation setup for the Day 3 polling system for Northstar Retail Co.
+
+## Notes
+- Code related to polling (setInterval and pollWarehouseAPI function) is marked for deprecation in Day 4.
+- This system serves as a baseline for future enhancements and modifications.

@@ -1,1 +1,138 @@
-<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>NORTHSTAR — Inventory Atelier</title>\n    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Playfair+Display:wght@700&family=Cormorant+Garamond:wght@400;600&family=Syne:wght@400&display=swap" rel="stylesheet">\n    <link rel="stylesheet" href="styles.css">\n    <script src="app.js" defer></script>\n</head>\n<body>\n\n<header class="navbar">\n    <div class="navbar-left">\n        <h1 class="navbar-logo">NORTHSTAR</h1>\n    </div>\n    <nav class="navbar-center">\n        <ul>\n            <li>ALL</li>\n            <li>JACKETS</li>\n            <li>SWEATERS</li>\n            <li>DRESSES</li>\n            <li>DENIM</li>\n            <li>TRAINERS</li>\n            <li>ACCESSORIES</li>\n        </ul>\n    </nav>\n    <div class="navbar-right">\n        <div class="hamburger-icon">&#9776;</div>\n    </div>\n</header>\n\<aside class="side-drawer">\n    <button class="close-drawer">×</button>\n    <h2>Inventory Navigation</h2>\n    <ul>\n        <li>All Categories</li>\n        <li>GraphQL Schema Explorer</li>\n        <li>Filter by Status</li>\n    </ul>\n</aside>\n\n<section class="hero-section">\n    <div class="hero-left">\n        <div class="hero-background"></div>\n        <h1 class="hero-title">NORTHSTAR RETAIL CO.</h1>\n        <p class="tagline">Where Inventory Meets Couture</p>\n        <p class="subtitle">25 Exclusive Items · Live GraphQL Sync · Real-Time Stock Intelligence</p>\n        <button class="cta-button">EXPLORE COLLECTION</button>\n    </div>\n    <div class="hero-right">\n        <div class="dashboard-card">\n            <h2>LIVE INVENTORY PULSE</h2>\n            <div class="metrics">\n                <div class="metric">TOTAL ITEMS: <span id="total-items">25</span></div>\n                <div class="metric">IN STOCK</div>\n                <div class="metric pulse-warning">LOW STOCK</div>\n                <div class="metric pulse-danger">OUT OF STOCK</div>\n            </div>\n            <span class="graphql-badge">POWERED BY GRAPHQL</span>\n        </div>\n    </div>\n</section>\n\n<section class="stats-bar">\n    <div class="stat-card"><span class="large-number" id="total-items-stat">25</span><span class="metric-label">Total Items</span></div>\n    <div class="stat-card"><span class="large-number" id="in-stock-stat">25</span><span class="metric-label">In Stock</span></div>\n    <div class="stat-card"><span class="large-number" id="low-stock-stat">3</span><span class="metric-label">Low Stock</span></div>\n    <div class="stat-card"><span class="large-number" id="out-of-stock-stat">2</span><span class="metric-label">Out of Stock</span></div>\n</section>\n\n<section class="featured-carousel">\n    <h2>FEATURED EXCLUSIVES</h2>\n    <div class="carousel">\n        <!-- Carousel items will be inserted dynamically -->\n    </div>\n</section>\n\n<section class="filter-section">\n    <h2 class="collection-title">THE COLLECTION</h2>\n    <input type="text" class="search-bar" placeholder="Search by SKU or name...">\n    <div class="filter-tabs">\n        <span class="filter-tab active">All</span>\n        <span class="filter-tab">Jacket</span>\n        <span class="filter-tab">Sweater</span>\n        <span class="filter-tab">Cashmere Set</span>\n        <span class="filter-tab">Dress</span>\n        <span class="filter-tab">Skirt</span>\n        <span class="filter-tab">Blouse</span>\n        <span class="filter-tab">Shirt</span>\n        <span class="filter-tab">Crochetwear</span>\n        <span class="filter-tab">Denim Jeans</span>\n        <span class="filter-tab">Leggings</span>\n        <span class="filter-tab">Jersey</span>\n        <span class="filter-tab">Trainers</span>\n        <span class="filter-tab">Socks</span>\n        <span class="filter-tab">Marvin</span>\n    </div>\n</section>\n\n<section class="inventory-grid">\n    <!-- Inventory cards will be dynamically rendered here -->\n</section>\n\n<section class="brand-story">\n    <div class="story-left">\n        <h2 class="quote">Luxury is not a privilege. It's a standard.</h2>\n    </div>\n    <div class="story-right">\n        <p>About Northstar Retail Co. Lorem ipsum dolor sit amet...</p>\n    </div>\n</section>\n\n<section class="graphql-status-panel">\n    <div class="graphql-status-title">GRAPHQL ENGINE STATUS</div>\n    <div class="query-status">\n        <span class="query-indicator active"></span> Active Queries\n        <span class="query-badge live">Cache Status: LIVE</span>\n        <span class="last-sync">Last Sync: <span id="last-sync-time"></span></span>\n    </div>\n    <div class="available-queries">\n        <span class="query-pill">getItem</span>\n        <span class="query-pill">getAllItems</span>\n        <span class="query-pill">getByCategory</span>\n        <span class="query-pill">getOutOfStock</span>\n        <span class="query-pill">getLowStock</span>\n    </div>\n</section>\n\n<footer class="footer">\n    <h1>NORTHSTAR RETAIL CO.</h1>\n    <p class="tagline">The Meridian Pivot — Sprint 2 Prototype</p>\n    <div class="wisteria-line"></div>\n    <p class="powered-by">Powered by GraphQL + Apollo Server + Vercel</p>\n</footer>\n\n</body>\n</html>\n
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NORTHSTAR — Inventory Atelier</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Playfair+Display:wght@400;700&family=Cormorant+Garamond:wght@400;700&family=Syne:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">NORTHSTAR</div>
+        <ul class="nav-links">
+            <li>ALL</li>
+            <li>JACKETS</li>
+            <li>SWEATERS</li>
+            <li>DRESSES</li>
+            <li>DENIM</li>
+            <li>TRAINERS</li>
+            <li>ACCESSORIES</li>
+        </ul>
+        <div class="hamburger">&#9776;</div>
+    </nav>
+    
+    <aside class="side-drawer">
+        <button class="close-btn">✖</button>
+        <h2>Deep Inventory Navigation</h2>
+        <ul>
+            <li>All Categories</li>
+            <li>GraphQL Schema Explorer</li>
+            <li>Filter by Status</li>
+        </ul>
+    </aside>
+
+    <section class="hero-section">
+        <div class="hero-left">
+            <div class="hero-background"></div>
+            <h1>NORTHSTAR RETAIL CO.</h1>
+            <p class="tagline">Where Inventory Meets Couture</p>
+            <h3 class="animated-subtitle">25 Exclusive Items · Live GraphQL Sync · Real-Time Stock Intelligence</h3>
+            <button class="cta-button">EXPLORE COLLECTION</button>
+        </div>
+        <div class="hero-right">
+            <div class="dashboard-card">
+                <h2>LIVE INVENTORY PULSE</h2>
+                <div class="metrics">
+                    <div class="metric">
+                        <span class="count" data-count="25">0</span>
+                        <label>TOTAL ITEMS</label>
+                    </div>
+                    <div class="metric low-stock">
+                        <span class="count" data-count="5">0</span>
+                        <label>LOW STOCK</label>
+                    </div>
+                    <div class="metric out-of-stock">
+                        <span class="count" data-count="2">0</span>
+                        <label>OUT OF STOCK</label>
+                    </div>
+                </div>
+                <span class="graphql-badge">POWERED BY GRAPHQL</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="stats-bar">
+        <div class="stat-card"><div class="number" data-count="40">0</div><div>JACKETS</div></div>
+        <div class="stat-card"><div class="number" data-count="50">0</div><div>SWEATERS</div></div>
+        <div class="stat-card"><div class="number" data-count="30">0</div><div>DRESSES</div></div>
+        <div class="stat-card"><div class="number" data-count="20">0</div><div>ACCESSORIES</div></div>
+    </div>
+
+    <section class="featured-carousel">
+        <h2>FEATURED EXCLUSIVES</h2>
+        <div class="carousel">
+            <!-- Carousel items will be rendered here dynamically -->
+        </div>
+    </section>
+
+    <section class="filter-tabs">
+        <h2 class="collection-title">THE COLLECTION</h2>
+        <input type="text" class="search-input" placeholder="Search by SKU or name...">
+        <div class="filters">
+            <span class="filter-pill">ALL</span>
+            <span class="filter-pill">JACKET</span>
+            <span class="filter-pill">SWEATER</span>
+            <span class="filter-pill">CASHMERE SET</span>
+            <span class="filter-pill">DRESS</span>
+            <span class="filter-pill">SKIRT</span>
+            <span class="filter-pill">BLOUSE</span>
+            <span class="filter-pill">SHIRT</span>
+            <span class="filter-pill">CROCHETWEAR</span>
+            <span class="filter-pill">DENIM JEANS</span>
+            <span class="filter-pill">LEGINGS</span>
+            <span class="filter-pill">JERSEY</span>
+            <span class="filter-pill">TRAINERS</span>
+            <span class="filter-pill">SOCKS</span>
+            <span class="filter-pill">MARVIN</span>
+        </div>
+    </section>
+
+    <section class="inventory-grid">
+        <!-- Inventory items will be rendered here dynamically -->
+    </section>
+
+    <section class="brand-story">
+        <div class="story-quote">
+            <h2>"Luxury is not a privilege. It's a standard."</h2>
+        </div>
+        <div class="story-text">
+            <p>Northstar Retail Co. is committed to redefining luxury through unparalleled quality and innovation.</p>
+        </div>
+    </section>
+
+    <section class="graphql-indicator">
+        <h2>GRAPHQL ENGINE STATUS</h2>
+        <div class="indicators">
+            <div class="active-queries">Active Queries: <span class="pulse"></span></div>
+            <div class="cache-status">Cache Status: <span class="live-badge">LIVE</span></div>
+            <div class="last-sync">Last Sync: <span class="timestamp">Just now</span></div>
+            <div class="available-queries">
+                <span class="query-pill">getItem</span>
+                <span class="query-pill">getAllItems</span>
+                <span class="query-pill">getByCategory</span>
+                <span class="query-pill">getOutOfStock</span>
+                <span class="query-pill">getLowStock</span>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>NORTHSTAR RETAIL CO.</p>
+        <p class="tagline">The Meridian Pivot — Sprint 2 Prototype</p>
+        <hr class="accent-line">
+        <small>Powered by GraphQL + Apollo Server + Vercel</small>
+    </footer>
+</body>
+</html>
