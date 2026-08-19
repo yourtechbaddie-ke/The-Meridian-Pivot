@@ -1,200 +1,210 @@
 # Northstar Retail Co. — Webhook Refactor (Days 4-5)
 
-## Full Server/App Code
+This document outlines the refactored implementation of the webhook push model for Northstar Retail Co. following the non-negotiable pivot on Day 4.
+
+## Complete Code for Webhook Push Model
 
 ```javascript
-// Importing necessary modules
-const express = require('express');
-const cors = require('cors');
-const crypto = require('crypto');
+// Import necessary modules
+const express = require('express'); // Express framework for building APIs
+const cors = require('cors'); // CORS middleware for enabling cross-origin requests
+const crypto = require('crypto'); // Crypto module for HMAC-SHA256 signature validation
 
+// Initialize express app
 const app = express();
-app.use(cors()); // Enable CORS for all routes
-app.use(express.json()); // Parse JSON bodies
+app.use(cors());
+app.use(express.json()); // Middleware to parse JSON body
 
-// In-memory cache to store stock data
-const stockCache = {};
-
-// Webhook event log
-const webhookLog = [];
-
-// Mock warehouse API data (Northstar inventory)
+// Mock warehouse data representing the full Northstar inventory
 const warehouseData = [
-  // (same data as in original code)
+  // ... (same as before, omitted for brevity)
 ];
 
-// Webhook Secret
-const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
+// In-memory cache object for storing stock levels keyed by item_id
+const stockCache = {};
 
-// [DEPRECATED - Removed per Day 4 Pivot]
-// Function to poll the warehouse API (mock data source here)
-// const pollWarehouseAPI = () => {
-//   console.log("Polling warehouse API for stock updates...");
-//   warehouseData.forEach(item => {
-//     stockCache[item.item_id] = {
-//       name: item.name,
-//       category: item.category,
-//       price: item.price,
-//       stock: item.stock,
-//       status: item.stock > 0 ? (item.stock < 20 ? "LOW STOCK" : "IN STOCK") : "OUT OF STOCK"
-//     };
-//   });
-//   console.log("Warehouse stock cache updated.");
-// };
+// Function to update stock cache with warehouse data
+const updateCache = (item) => {
+  stockCache[item.item_id] = {
+    name: item.name,
+    stock: item.stock,
+    status: item.status
+  };
+};
 
-// [DEPRECATED - Removed per Day 4 Pivot]
-// Polling every 5 minutes (300,000 milliseconds)
-// const pollingInterval = setInterval(pollWarehouseAPI, 300000);
-// [DEPRECATED - Removed per Day 4 Pivot] // Initial call to populate the cache immediately upon startup
-// pollWarehouseAPI();
+// Webhook event log
+const webhookEventLog = [];
 
-// Endpoint to handle webhook for inventory updates
+// New endpoint for receiving webhook updates [DAY 4 PIVOT - Added]
 app.post('/webhook/inventory-update', (req, res) => {
   const { item_id, name, stock, status, timestamp, signature } = req.body;
 
-  // Validate signature
-  const hmac = crypto.createHmac('sha256', WEBHOOK_SECRET);
-  const computedSignature = hmac.update(JSON.stringify(req.body)).digest('hex');
+  // Signature validation
+  const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
+  const hash = crypto.createHmac('sha256', WEBHOOK_SECRET)
+    .update(JSON.stringify(req.body))
+    .digest('hex');
 
-  if (computedSignature !== signature) {
-    return res.status(401).json({ message: 'Unauthorized' }); // Invalid signature
+  if (hash !== signature) { // If the signature is invalid
+    return res.status(401).send('Unauthorized'); // [DAY 4 PIVOT - Added]
   }
 
-  // Update the stock cache
-  stockCache[item_id] = {
-    name,
-    stock,
-    status,
-    updatedAt: timestamp
-  };
-
-  // Log the webhook event
-  webhookLog.unshift({ item_id, stock, status, timestamp });
-  if (webhookLog.length > 10) {
-    webhookLog.pop(); // Keep only the last 10 events
+  // Valid webhook
+  const item = { item_id, name, stock, status, timestamp };
+  updateCache(item); // Update the in-memory cache
+  webhookEventLog.push(item); // Save to event log
+  if (webhookEventLog.length > 10) {
+    webhookEventLog.shift(); // Keep only the last 10 events
   }
-
-  console.log(`Received webhook update for item ${item_id}`);
-  return res.status(200).json({ message: 'Stock updated successfully' });
+  
+  res.status(200).send('Inventory updated'); // Respond to webhook
 });
 
-// Endpoint to get stock data for a specific item by item_id
+// REST endpoint to get stock for a specific item by item_id [DAY 4 PIVOT - Added]
 app.get('/stock/:item_id', (req, res) => {
-  const item_id = req.params.item_id;
-  const stockData = stockCache[item_id];
-
+  const itemId = req.params.item_id;
+  const stockData = stockCache[itemId];
+  
+  // Return stock data if found, otherwise return a 404 error
   if (stockData) {
-    return res.json(stockData);
+    res.json(stockData);
   } else {
-    return res.status(404).json({ message: "Item not found" });
+    res.status(404).json({ error: "Item not found" });
   }
 });
 
-// Endpoint to get cached stock data for all items
+// REST endpoint to get all stock data in cache [DAY 4 PIVOT - Added]
 app.get('/stock/all', (req, res) => {
-  return res.json(Object.values(stockCache));
+  res.json(stockCache);
 });
 
-// Endpoint to access the webhook event log
+// Webhook event log endpoint [DAY 4 PIVOT - Added]
 app.get('/webhook/log', (req, res) => {
-  return res.json(webhookLog);
+  res.json(webhookEventLog);
 });
 
-// Start the express server
-const PORT = process.env.PORT || 5000;
+// DEPRECATED - Removed per Day 4 Pivot
+// Function to update stock cache every 5 minutes
+// const updateCache = () => {
+//   // Update cache with mock warehouse data
+//   warehouseData.forEach(item => {
+//     stockCache[item.item_id] = {
+//       name: item.name,
+//       stock: item.stock,
+//       status: item.status
+//     };
+//   });
+// };
+
+// DEPRECATED - Removed per Day 4 Pivot
+// // Set an interval to poll the warehouse every 5 minutes (300000 milliseconds)
+// setInterval(() => {
+//   console.log("Polling warehouse API and updating stock cache...");
+//   updateCache();
+// }, 300000); // Poll every 5 minutes
+
+// Start the server on port 3000
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 ```
 
-## Mock Warehouse API Data
-
-```javascript
-const warehouseData = [
-  { item_id: "NSJ001", name: "Sovereign Shearling Trench", category: "Jacket", price: 2850, stock: 40, status: "IN STOCK" },
-  // (same data as in original code)
-];
-```
-
 ## Updated Usage Instructions
 
-1. **Install Dependencies**
-   - Ensure you have Node.js installed. Then create a new folder and navigate to it in your terminal. Run:
+1. **Prerequisites:**
+   - Ensure you have Node.js installed on your machine.
+   - Set the `WEBHOOK_SECRET` environment variable.
+
+2. **Setup Project:**
+   Create a new directory and navigate into it:
+   ```bash
+   mkdir northstar-webhook-service
+   cd northstar-webhook-service
+   ```
+
+3. **Initialize Node.js Project:**
    ```bash
    npm init -y
+   ```
+
+4. **Install Dependencies:**
+   ```bash
    npm install express cors
    ```
 
-2. **Set Up Environment Variables**
-   - Set your `WEBHOOK_SECRET` in your environment to validate the webhook signature:
-   ```bash
-   export WEBHOOK_SECRET='your_shared_secret'
-   ```
+5. **Create and Edit the Server File:**
+   Create a file named `server.js` and paste the complete code provided above.
 
-3. **Run the Server**
-   - Create a file (e.g., `server.js`) and copy the server code into it. Then run:
+6. **Run the Server:**
+   Execute the following command:
    ```bash
    node server.js
    ```
 
-4. **Access the API Endpoints**
-   - You can test the API with any HTTP client (like Postman) or browser. Here are the endpoints to hit:
-   - **Get stock data for a specific item**:
-     - `GET http://localhost:5000/stock/:item_id`
-     - Example: `http://localhost:5000/stock/NSD001`
-     - **Expected Response**:
-     ```json
-     {
-       "item_id": "NSD001",
-       "name": "Opulent Backless Gown",
-       "stock": 50,
-       "status": "IN STOCK"
-     }
+7. **Access the API Endpoints:**
+   - **Get Stock by Item ID:**
+     ```
+     GET http://localhost:3000/stock/{item_id}
+     ```
+     Replace `{item_id}` with the actual item's id (e.g., `NSJ001`).
+
+   - **Get All Stock:**
+     ```
+     GET http://localhost:3000/stock/all
      ```
 
-   - **Get full cached inventory**:
-     - `GET http://localhost:5000/stock/all`
-     - **Expected Response**:
+   - **Send Webhook Payloads for Testing:**
+     To test the webhook, send a POST request to:
+     ```
+     POST http://localhost:3000/webhook/inventory-update
+     ```
+     With a JSON body, example:
+     ```json
+     {
+       "item_id": "NSJ001",
+       "name": "Sovereign Shearling Trench",
+       "stock": 35,
+       "status": "LOW STOCK",
+       "timestamp": "2026-08-19T10:00:00Z",
+       "signature": "YOUR_SIGNED_HASH"
+     }
+     ```
+     Make sure to replace `YOUR_SIGNED_HASH` with the HMAC-SHA256 signature computed using the payload and the `WEBHOOK_SECRET`.
+
+   - **Get Webhook Event Log:**
+     ```
+     GET http://localhost:3000/webhook/log
+     ```
+
+8. **Expected Response:**
+   - For a specific item:
+     ```json
+     {
+       "item_id": "NSJ001",
+       "name": "Sovereign Shearling Trench",
+       "stock": 35,
+       "status": "LOW STOCK"
+     }
+     ```
+   - For all stock:
+     ```json
+     {
+       "NSJ001": { "name": "Sovereign Shearling Trench", "stock": 35, "status": "LOW STOCK" },
+       ...
+     }
+     ```
+   - For webhook log:
      ```json
      [
        {
          "item_id": "NSJ001",
          "name": "Sovereign Shearling Trench",
-         "stock": 40,
-         "status": "IN STOCK"
-       },
-       ...
-     ]
-     ```
-
-   - **Send a test webhook payload** (using POST request):
-     - `POST http://localhost:5000/webhook/inventory-update`
-     - Payload example:
-     ```json
-     {
-       "item_id": "NSD001",
-       "name": "Opulent Backless Gown",
-       "stock": 30,
-       "status": "LOW STOCK",
-       "timestamp": "2026-08-18T12:00:00Z",
-       "signature": "your_signature_here" // Replace with calculated HMAC-SHA256 signature
-     }
-     ```
-     
-5. **View Webhook Event Log**
-   - To see the last 10 webhook events:
-     - `GET http://localhost:5000/webhook/log`
-     - **Expected Response**:
-     ```json
-     [
-       {
-         "item_id": "NSD001",
-         "stock": 30,
+         "stock": 35,
          "status": "LOW STOCK",
-         "timestamp": "2026-08-18T12:00:00Z"
-       },
-       ...
+         "timestamp": "2026-08-19T10:00:00Z"
+       }
      ]
      ```
 
-This updated structure effectively replaces the polling system with a stable and clean webhook push model while maintaining the existing query endpoints and adding new functionalities.
+This concludes the implementation setup for the Day 4 pivot to a webhook push model for Northstar Retail Co.

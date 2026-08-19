@@ -2,77 +2,63 @@
 
 ## SCOPE DELTA TABLE
 
-| DROPPED | MODIFIED | ADDED |
-|---------|----------|-------|
-| - Polling mechanism for stock updates <br>- Polling interval (5 mins) | - Cache handling logic <br>- Item stock retrieval endpoints (/stock/:item_id and /stock/all) remain the same | - Webhook endpoint for inventory updates (/webhook/inventory-update) <br>- Webhook event log endpoint (/webhook/log) |
+| DROPPED                        | MODIFIED                            | ADDED                                              |
+|--------------------------------|-------------------------------------|---------------------------------------------------|
+| - Polling system for inventory updates (setInterval for cache update every 5 min) | - In-memory stock cache logic with updated stock from webhook | - New endpoint for webhook inventory updates `/webhook/inventory-update` |
+| - Automatic cache updates using polling | - REST endpoints for fetching stock remain unchanged | - Webhook event log endpoint `/webhook/log` |
+|                                | - Signature validation mechanism for webhooks added | - Event logging for last 10 webhook events         |
 
 ## ARCHITECTURAL TRADE-OFF ANALYSIS
 
 ### Polling vs. Webhook
 
-| Criteria       | Polling                     | Webhook                    |
-|----------------|-----------------------------|----------------------------|
-| Reliability     | Depends on polling frequency; can miss updates if server is down. | High reliability; updates are pushed from the source immediately. |
-| Latency         | Potential delay due to polling interval (up to 5 minutes). | Near real-time updates upon events. |
-| Server Load     | Constant load due to periodic requests even when no updates exist. | Reduces server load; only responds to incoming webhook events. |
-| Complexity      | Simple to implement but inefficient for real-time scenarios. | More complex setup with signature validation but efficient. |
-| Scalability     | Bottleneck for high traffic; every client querying increases load. | Scales well since it pushes data as needed, reducing redundant requests. |
+| Criteria      | Polling                            | Webhook                             |
+|---------------|------------------------------------|-------------------------------------|
+| Reliability    | Dependent on poll interval; may miss updates between polls | Immediate updates sent directly from the warehouse |
+| Latency       | Introduces delays (up to 5 min)   | Near real-time updates              |
+| Server Load   | Increased load due to regular polling even when no data has changed | Reduced server load during idle states since updates are event-driven |
+| Complexity    | Simple implementation               | More complex due to signature validation and error handling   |
+| Scalability   | May struggle with high-frequency polling as data grows | Highly scalable, as it only transmits changes when needed   |
 
-### Gains and Losses from Switching
+### Gains and Losses
 
-- **Gains**: 
-   - Real-time updates to stock data via webhooks enhance user experience.
-   - Reduced server load due to lack of periodic polling.
-   - Cleaner and more maintainable code since polling-related logic was removed.
-- **Losses**:
-   - Complexity introduced with webhook signature validation.
-   - Dependency on the external webhook's reliability — failure of the webhook source means lost updates.
+- **Gains:**
+  - Real-time inventory updates improve responsiveness to stock changes.
+  - Decreased server load when inventory remains stable.
+  - Increased reliability in data accuracy with robust signature validation for webhooks.
+
+- **Losses:**
+  - Increased complexity in the codebase with the need for signature validation.
+  - Initial setup requires the configuration of a secure secret for webhook verification.
 
 ### Suitability for Northstar Retail Co.
 
-The webhook model is better suited for Northstar Retail Co.'s use case as it supports the need for immediate stock availability updates, directly impacting inventory management and customer experience. The reduced latency and server load make it more efficient in handling high traffic scenarios that could arise during peak shopping times.
+The webhook model is better suited for Northstar Retail Co.'s use case because it allows for real-time updates of inventory, which is critical in a retail environment where stock levels can change rapidly. This ensures that customers receive accurate information regarding product availability and avoids potential over-selling or stock discrepancies.
 
 ## REGRESSION CHECK
 
-The following endpoints and functionalities were tested post-pivot to confirm original features still work:
+After executing the pivot, the following checks were performed to ensure the integrity of existing functionalities:
 
 - **GET /stock/:item_id**
-  - **Result**: Confirmed to work; returns specified item details accurately.
-  - Example: Requesting `GET /stock/NSD001` returns:
-    ```json
-    {
-      "item_id": "NSD001",
-      "name": "Opulent Backless Gown",
-      "stock": 50,
-      "status": "IN STOCK"
-    }
-    ```
-  
+  - **Status:** Works (returns expected stock data)
 - **GET /stock/all**
-  - **Result**: Confirmed to work; returns the complete list of current stock.
-  - Example: Execution of `GET /stock/all` provides a complete inventory response.
-  
-- **Data Accuracy**: 
-  - Confirmed that all cached stock data is still accurately reflected.
-  
-- **Adjusted Features**: 
-  - The deprecated polling functionality was effectively removed. No functional changes to the endpoints querying stock data, which operate as expected under the new architecture.
+  - **Status:** Works (returns complete stock data)
+- **Data Accuracy:**
+  - **Confirmation:** Data accuracy maintained; stock levels reflect the latest updates.
+- **Adjusted Features:** No original features required adjustment to remain functional, as the new implementation built upon and enhanced the existing structure.
 
 ## BACKLOG REPRIORITIZATION NOTES
 
-Based on the pivot and integration of the webhook architecture, the following items should now be prioritized in the next sprint:
+### Next Sprint Priorities:
+- **Webhook Resilience Improvements:** Implement retry logic for processing failed webhook requests.
+- **Webhook Signature Management:** Develop better logging and alerting mechanisms for security monitoring.
+- **UI/UX Feedback Mechanism:** Gather user feedback on real-time stock updates to identify further enhancements needed.
 
-1. **Implement Comprehensive Unit Tests**: Adding tests for the webhook endpoint handling and signature verification to ensure robustness.
-2. **Monitoring and Logging Enhancements**: Develop better monitoring tools for webhook failures to quickly respond to issues.
-3. **Feedback Channels**: Set up direct feedback channels from end-users regarding stock availability updates to continually refine the system.
-4. **API Documentation Update**: Revise existing API documentation to reflect the changes from polling to webhooks and include examples for the new endpoints.
-5. **Technical Debt**: Address any potential technical debt introduced by the webhook implementation, particularly concerning error handling and logging.
+### Technical Debt:
+- **Documentation of Webhook Implementation:** Ensure code is thoroughly documented, especially new functions for webhook handling.
+- **Testing Coverage:** Increase unit tests to cover webhook functionalities, especially for signature validation and error handling.
 
 ### Recommended Next Steps:
-- Investigate implementing a retry mechanism for handling webhook failures.
-- Explore alternate storage options for webhook logs to ensure that they can be analyzed historically.
-- Allocate time for team training on webhooks and secure implementation practices to enhance overall system knowledge.
-
----
-
-This Scope Delta Analysis captures all critical changes made during the Meridian Pivot for Northstar Retail Co., providing a clear overview of functionality adjustments, expected gains, and next steps for continual improvement.
+- **Evaluate Third-Party Services:** Consider using a more robust third-party service for managing webhooks to offload some complexity.
+- **Training Sessions:** Schedule sessions for team members on working with AWS Lambda or Google Cloud Functions to facilitate future webhook processing.
+- **Integration Pipeline:** Set up a deployment pipeline that includes integration tests to verify that both the webhook and existing infrastructure continue to work harmoniously post-deployment.

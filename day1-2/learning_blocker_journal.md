@@ -1,95 +1,133 @@
 # Learning & Blocker Journal — Days 1-2 (GraphQL Solo Recon)
 
-## Day 1
+## Day 1 (2026-08-19)
 
-### 2026-08-17 — Understanding the Basics of GraphQL
+### Time Log
+- **10:00 AM - 11:30 AM:** Introduction to GraphQL
+- **11:30 AM - 12:30 PM:** Setting up the project
+- **1:00 PM - 3:00 PM:** Reviewing schema and resolver implementation
+- **3:30 PM - 5:00 PM:** Query testing and troubleshooting
+- **Total Time Spent:** 6 hours
 
-**Time Log: Approx. 6 hours**
+### Activities and Resources
 
-#### 09:00 - 10:00 | Introduction to GraphQL
-- **Resources Consulted:**
-  - [GraphQL Official Documentation](https://graphql.org/learn/)
-- I started by reading through the basics of GraphQL, understanding its core principles compared to REST APIs. I focused on queries, mutations, and schemas.
+1. **Resource: GraphQL Official Documentation**  
+   Read through the [GraphQL official documentation](https://graphql.org/learn/) to get a fundamental understanding of GraphQL concepts. 
 
-#### 10:00 - 11:30 | GraphQL SDL (Schema Definition Language)
-- **Activity:** I imagined how to model the Northstar Retail inventory in GraphQL.
-- **Breakthrough:** I realized the power of typing and how clear definitions (like for `Item`) can help in structuring queries. I drafted a simple schema for the inventory focusing on jackets initially.
+   **Aha Moment:** Realized the distinction between query and mutation as well as how GraphQL allows for fetching exactly what a client needs.
 
-#### 11:30 - 12:00 | First Confusion: Schema Structure
-- **Blocker Encountered:** I wasn't sure how to include optional fields in my schema, like `fabric`.
-- **Resolution:** I flipped back to the official documentation and found out that optional fields can simply be defined by omitting the `!`. 
+2. **Setup Project**  
+   Followed instructions to set up a new Node.js project and installed Apollo Server and GraphQL.
+   ```bash
+   mkdir northstar-graphql  
+   cd northstar-graphql  
+   npm init -y  
+   npm install apollo-server graphql  
+   ```
 
-#### 12:00 - 13:00 | Querying Basics
-- **Resources Consulted:**
-  - [How to GraphQL - Querying](https://graphql.howto/graphql-queries)
-- I explored how to use queries to fetch item details and crafted examples based on our jackets.
+   **Breakthrough:** Successfully set up the project environment by following the instructions without errors.
 
-#### 13:00 - 14:00 | Lunch Break
+3. **Schema Review**  
+   Examined the given SDL schema to understand object types and queries relevant to the Northstar Retail Co. inventory.
 
-#### 14:00 - 15:30 | Setting Up Apollo Server
-- **Activity:** I setup the Apollo Server in a project folder and wrote the code structure based on the GraphQL schema I defined.
-- **Dead End Encountered:** My server wouldn’t start due to missing packages. 
-- **Resolution:** I ran `npm install apollo-server graphql` and confirmed installation before re-running the server.
+   **Blocker: Confusion with Fields and Types**  
+   Didn't initially understand how to correlate the item-specific fields (e.g., `item_id`, `stock`) with their usage in queries.
+   
+   **Resolution:** Referred back to the official documentation and samples. Focused on how to construct queries based on the defined schema.
 
-#### 15:30 - 16:30 | First Query Success
-- I tested my first query using GraphQL Playground. I crafted a query to retrieve jacket items and was successful in getting responses. 
-- **Breakthrough:** Seeing my query work in the GraphQL Playground felt rewarding, especially when I retrieved details on a specific jacket.
+4. **Writing Sample Queries**  
+   Started writing sample queries based on the schema.
 
-#### 16:30 - 17:00 | Learning About Resolvers
-- I read about resolvers and how they connect schema to data.
-- **Aha Moment:** Realizing that I needed to write functions for each query to fetch from my inventory array. 
+   - **Query to fetch an item by ID:**  
+     ```graphql
+     query {
+       getItem(id: "NSJ001") {
+         item_id
+         name
+         category
+       }
+     }
+     ```
 
-#### 17:00 - 18:00 | Writing Resolvers
-- **Activity:** I wrote the basic resolver functions to fetch jacket items from the inventory.
-- **Blocker Encountered:** I couldn’t get the resolver for fetching all items to return data properly.
-- **Resolution:** I realized I was not returning anything from the resolver function. After correcting this, the query worked perfectly.
+   **Error Encountered:** Received an error related to missing fields in the response when the request was executed.
 
----
+   **Resolution:** Discovered that my query was incomplete. Adjusted the query to match the fields defined in the schema.
 
-## Day 2
+   **Breakthrough:** Successfully fetched data for an item from the inventory, which was exhilarating!
 
-### 2026-08-18 — Building the Mini-Prototype
+### Blockers and Resolutions
 
-**Time Log: Approx. 7 hours**
+- **Blocker 1: Unable to Get All Items**  
+  Attempted to run a query to get all items but received a null response.  
+  - **Resolution:** Checked my resolver implementation and found that the resolver for `getAllItems` had not been properly set up. After implementing the resolver logic correctly, I was able to retrieve the item list successfully.
 
-#### 09:00 - 10:30 | Consolidating Knowledge
-- I reviewed my notes and existing queries, brushed up on everything from day 1, and confirmed that the resolvers were connected to the GraphQL server. 
+- **Blocker 2: Formatting Issues**  
+  Errors occurred during the JSON formatting stage of the query responses.  
+  - **Resolution:** Wrote tests to validate the output in a format I expected against the JSON structure in the documentation. This helped ensure that my queries matched their expected outputs.
 
-#### 10:30 - 12:00 | Implementing All Queries
-- I wrote the remaining resolvers for other inventory queries: `getByCategory`, `getOutOfStock`, and `getLowStock`.
-- **Blocker Encountered:** When testing the `getOutOfStock` query, it returned an empty array, which was confusing since I knew there were out-of-stock items.
-- **Resolution:** After debugging, I discovered I was checking the status incorrectly (spelled incorrectly). A quick fix on the string comparison resolved the issue.
-
-#### 12:00 - 13:00 | Lunch Break
-
-#### 13:00 - 14:30 | More Testing of Queries
-- I began testing all queries in the GraphQL Playground.
-- **Breakthrough:** Successfully retrieving data for multiple categories, out of stock items, and low stock items. The queries responded quickly, and each detail was clear.
-
-#### 14:30 - 16:00 | Implementing and Testing Error Handling
-- I researched error handling in Apollo Server.
-- **Blocker Encountered:** I tried to send a query with a non-existent item ID, expecting a clean error message.
-- **Resolution:** After reading through the documentation, I added error handling logic to my resolvers. I learned to throw customized error messages for better client feedbacks.
-
-#### 16:00 - 17:00 | Final Touches and Documentation
-- I documented all my queries and their expected responses for future reference.
-- I prepared a README so that I could easily onboard someone else to the project if needed later.
-
-#### 17:00 - 18:00 | Reflection and Preparation for Team Build
-- I reviewed my learning over the past two days. 
-- **Self-Assessment:** I feel equipped to collaborate with my team in the next sprint. I documented pitfalls and resolutions clearly, enabling others to avoid the same pitfalls.
+- **Blocker 3: Low Stock Query**  
+  The logic to tally low stock items was unclear initially.  
+  - **Resolution:** Returned to the documentation for clarification on implementing filter logics in resolvers. With this understanding, I was able to refine my resolver to return correctly filtered results.
 
 ---
 
-## Summary
+## Day 2 (2026-08-20)
 
-### Key Takeaways:
-- **GraphQL Foundation:** Gained a solid understanding of queries, schemas, and resolvers.
-- **Error Resolution Skills:** Developed troubleshooting skills through hands-on experimentation with resolvers and error handling.
-- **Documentation Importance:** Recognized the value of thorough documentation not just for personal reference but for team communication.
+### Time Log
+- **9:00 AM - 11:00 AM:** Resuming the project with a focus on creating more complex queries
+- **11:30 AM - 1:00 PM:** Implementing the resolver for getLowStock and getOutOfStock Queries
+- **1:30 PM - 4:00 PM:** Testing all implemented queries and debugging
+- **Total Time Spent:** 6 hours
 
-### Total Time Spent:
-Approximately 13 hours across Days 1 and 2.
+### Activities and Resources
 
-### Self-Assessment of Readiness for Day 3 Team Build:
-I feel confident in the foundational knowledge of GraphQL and the specific mini-prototype built for the Northstar Retail inventory. I'm ready to engage with the team in deeper discussions and contribute effectively.
+1. **Resource: GraphQL Tutorials**  
+   Followed [Apollo GraphQL's comprehensive tutorials](https://www.apollographql.com/docs/tutorial/introduction/) to deepen my understanding of Apollo Server.
+
+   **Aha Moment:** Learned how to take advantage of Apollo's features to manage complex data retrieval.
+
+2. **Building Queries for Different Item Categories**  
+   Created a query to fetch items filtered by categories and stock status.
+   ```graphql
+   query {
+     getLowStock {
+       item_id
+       name
+       stock
+     }
+   }
+   ```
+
+   **Breakthrough:** Successful testing of the query allowed me to visualize inventory status for low stock items.
+
+3. **Final Adjustments**  
+   Iterated on my GraphQL implementation to fine-tune the responsiveness of the API.
+   
+   **Blocker: Overwhelmed by Testing**  
+   Felt overwhelmed trying to keep track of which queries had been tested successfully and which hadn’t.
+   - **Resolution:** Created a simple checklist of queries and their expected outputs to streamline the testing process and track progress effectively.
+
+### Blockers and Resolutions
+
+- **Blocker 1: Failed Queries on Out of Stock Items**  
+  Initially, I tried an incorrect filtering method, leading to incorrect results when querying for out of stock items.
+  - **Resolution:** Reviewed the implementation logic, discovered my filter function was targeting the wrong criteria, and recalibrated to ensure I was filtering based on stock correctly.
+
+- **Blocker 2: Confusion with Asynchronous Handling**  
+  Experienced confusion over whether resolver functions should return raw data or promises.
+  - **Resolution:** Delved into the Apollo documentation and some Stack Overflow threads on best practices for returning data. This provided a clearer understanding of how resolving works asynchronously in GraphQL.
+
+- **Blocker 3: JSON Result Format Issues**  
+  Many of my test responses were yielding unformatted JSON, which made it hard to read.
+  - **Resolution:** Implemented `.pretty()` function in my testing to format the JSON output for better visibility during the testing phase.
+
+### Summary 
+
+- **Key Takeaways:** 
+  - Understanding GraphQL operates differently than REST, especially in terms of how data is structured and requested.
+  - Utilizing resources like documentation and tutorials greatly improved both my comprehension and troubleshooting skills.
+
+- **Total Time Spent (Days 1-2):** 12 hours
+
+- **Self-Assessment of Readiness for Day 3:**
+   I feel equipped to advance to the team build phase, having created a working prototype that connects to the Northstar Retail Co. inventory efficiently using GraphQL. My understanding is strong, and I am prepared to contribute effectively to the next phase of development.
