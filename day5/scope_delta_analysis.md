@@ -2,66 +2,56 @@
 
 ## 1. Scope Delta Table
 
-| DROPPED                                   | MODIFIED                                      | ADDED                                           |
-|-------------------------------------------|-----------------------------------------------|------------------------------------------------|
-| - Polling system functionality             | - Stock endpoints were modified to suit the webhook model; however, the basic structure remains the same. | - Webhook endpoint for inventory updates (`POST /webhook/inventory-update`) |
-| - Polling interval and caching mechanism    | - Enhanced validation of data for stock updates | - Endpoint to fetch the webhook event log (`GET /webhook/log`) |
-| - All REST endpoints for `/stock/:item_id` and `/stock/all` removed |                                               | - HMAC-SHA256 signature validation mechanism for security |
+| DROPPED                                   | MODIFIED                                                | ADDED                                                 |
+|-------------------------------------------|--------------------------------------------------------|------------------------------------------------------|
+| - Polling system implementation            | - Status logging for stock cache updated               | - Webhook endpoint (`POST /webhook/inventory-update`)|
+| - `pollWarehouseAPI` function             | - Structure of stock data returned via REST endpoints   | - Webhook event logging (last 10 events)             |
+| - Polling timer via `setInterval`       | - Data structure validation on `GET` requests          | - Signature verification for webhook requests         |
+|                                           | - Caching logic retains functionality                   | - Retrieving last webhook events (`GET /webhook/log`) |
 
-## 2. Architectural Trade-Off Analysis
+## 2. Architectural Trade-off Analysis
 
 ### Polling vs. Webhook
 
-| Criteria         | Polling                                     | Webhook                                     |
-|------------------|---------------------------------------------|---------------------------------------------|
-| **Reliability**   | Dependent on periodic fetch intervals. Potential for missed updates if warehouse API is down during polling. | Real-time updates ensure no data is missed. Webhooks triggered by the source. |
-| **Latency**       | Introduces inherent delay (5 minutes by default); can lead to outdated data. | Immediate updates; reduces stale data significantly. |
-| **Server Load**   | Higher server load due to frequent polling, unnecessary requests for unchanged data. | Lower server load; only responds to changes, minimizing resource use. |
-| **Complexity**    | Simpler implementation but requires timing and management of intervals. | More complex setup with signature validation and handling of webhook events. |
-| **Scalability**   | More challenging to scale as it places constant load regardless of demand. | More scalable, only invoking changes reduces backend strain. |
+| Criteria              | Polling                                            | Webhook                                           |
+|-----------------------|---------------------------------------------------|--------------------------------------------------|
+| **Reliability**       | Calls to the warehouse API depend on timing. May miss updates between polls. | Event-driven, updates occur in real-time.       |
+| **Latency**           | Delays due to fixed polling intervals (up to 5 minutes). | Immediate updates as they occur, reducing latency. |
+| **Server Load**       | Constantly sends requests to the API, increasing load. | Reduced load on the server; only reacts to events. |
+| **Complexity**        | Simpler in structure but requires constant polling logic. | More complex due to signature verification & security handling. |
+| **Scalability**       | May struggle with growth, limits on how often to poll. | Highly scalable, as it handles events as they arise. |
 
-### Gains and Losses from the Switch
-
-- **Gains**: Improved real-time responsiveness and reduced server load. Enhanced security through HMAC validation. The architecture is more aligned with best practices for modern APIs.
-- **Losses**: Increased initial complexity and the complete removal of the polling method may lead to challenges if webhook relationships with third parties become unstable.
+### Gains and Losses from the Pivot
+- **Gained**: Increased reliability of stock data accuracy, real-time updates, reduced server load, and improved scalability.
+- **Gave Up**: Simplicity of implementation; increased complexity due to webhook security management and potential challenge in testing/monitoring the event flow.
 
 ### Suitability for Northstar Retail Co.
-
-The webhook model is better suited for Northstar Retail Co.'s use case due to the real-time requirements of inventory management. It allows the company to keep accurate stock levels while minimizing server load, a critical aspect in retail environments where dynamic inventory is key to customer satisfaction and operational efficiency.
+The webhook model is better suited for Northstar Retail Co. due to its need for real-time inventory updates, essential for maintaining accurate stock levels and improving customer experience. Given the fast-paced nature of retail, immediate data feedback enhances responsiveness and operational efficiency.
 
 ## 3. Regression Check
 
-### Confirmed Functionalities
+After executing the pivot, the following checks were performed to ensure no old functionality was broken:
 
-- The endpoint `GET /stock/:item_id` is no longer functional due to the removal of the polling system. It has been replaced by the webhook system which relies on incoming stock updates.
-- The endpoint `GET /stock/all` has similarly been removed; users will now rely on the new hooks to stay updated on stock levels.
-  
-### Data Integrity
+- **Confirmed**: 
+  - `GET /stock/:item_id` still works as expected. Example: Request for `GET /stock/NSJ001` returns correct data.
+  - `GET /stock/all` returns the full cached inventory without issue.
+  - Data accuracy has been maintained; stock levels and statuses reflect the most recent updates provided by webhook notifications.
 
-- No old functionalities are broken because they have all been removed as part of the refactor. All new functionalities are working correctly as expected based on testing.
-
-### Features that Required Adjustment
-
-- The removal of all stock-related endpoints required comprehensive documentation updates and communication with any front-end clients relying on these endpoints.
+- **Noted Adjustments**: 
+  - The codebase was modified to implement caching logic without polling. The error handling for cases where an item is not found remained intact.
 
 ## 4. Backlog Reprioritization Notes
 
-### Items to Prioritize in Next Sprint
+### Priorities for Next Sprint
+1. Develop an automated testing framework specifically for webhook functionality, ensuring robust signature validation.
+2. Create a monitoring tool for webhook events to visualize the incoming updates and identify potential issues in real-time.
+3. Address potential technical debt introduced by the webhook complexity, specifically focusing on enhancing documentation and codebase clarity.
 
-1. **Enhancements to Webhook Handling**: Implementation of retry logic for failed deliveries and better error logging.
-2. **Client-side Handling**: Update the front-end applications to integrate with the new webhook system instead of the old REST endpoints.
-3. **Webhook Documentation**: Create comprehensive documentation on how to properly utilize and monitor the new webhook features.
-4. **Testing Strategy**: Develop automated tests for the new webhook endpoints to ensure future functionality does not break.
-
-### Technical Debt Introduced
-
-- There may be technical debt regarding the suboptimal implementation of the webhook logging feature, as only the last 10 webhook events are stored. Consider expanding this in future iterations.
+### Technical Debt
+- Need to improve error-handling strategies for `POST /webhook/inventory-update` to manage failed updates.
+- Enhancements in logging mechanisms to facilitate easier debugging and tracking of webhook events.
 
 ### Recommended Next Steps
-
-- Conduct a review of the webhook responses to ensure they correctly reflect inventory updates and are robust against malicious attempts.
-- Plan for a potential future enhancement of offering the ability to reconcile webhook events with historical data to maintain a complete inventory history.
-- Evaluate the logging feature for webhook events, ensuring administrators can view logs in a comprehensive manner for auditing and debugging.
-
---- 
-*End of Document*
+- Enhance user documentation regarding new webhook features and the setup process.
+- Assess performance under heavy load to ensure system reliability during peak inventory updates.
+- Gather stakeholder feedback on webhook performance and make adjustments based on practical usage.
