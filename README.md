@@ -1,12 +1,12 @@
-#THE MERIDIAN PIVOT — NORTHSTAR RETAIL CO. 
+THE MERIDIAN PIVOT — NORTHSTAR RETAIL CO. 
 
-**Description of the Simulation Phases
+Description of the Simulation Phases
 This project involves the development and deployment of a luxury retail inventory management system using GraphQL. The simulation phases include:
 - Days 1-2: Development of GraphQL prototype and exploration of schema.
 - Day 3: Initial implementation of polling system for stock updates.
 - Days 4-5: Transition from polling to a webhook-based system for real-time inventory management.
 
-**Full Folder Structure
+Full Folder Structure
 
 | Path                                   | Description                                                  |
 |----------------------------------------|--------------------------------------------------------------|
@@ -27,10 +27,10 @@ This project involves the development and deployment of a luxury retail inventor
 | public/styles.css                      | CSS styles for the frontend.                                 |
 | public/app.js                          | JavaScript for managing frontend interactions.                |
 
-**Deploy to Vercel
+Deploy to Vercel
 
-**View the Prototype
+View the Prototype
 The frontend UI features a luxury design with a responsive layout, showcasing an inventory dashboard, real-time statistics using GraphQL, and interactive filter/search functionality.
 
-**Sprint Deliverables Navigation Guide
+Sprint Deliverables Navigation Guide
 Navigate through the provided folder structure and documentation for detailed insight into each deliverable and the project's implementation.
