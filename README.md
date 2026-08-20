@@ -1,4 +1,4 @@
-The Meridian Pivot — Northstar Retail Co. 
+THE MERIDIAN PIVOT — NORTHSTAR RETAIL CO. 
 
 Description of the Simulation Phases
 This project involves the development and deployment of a luxury retail inventory management system using GraphQL. The simulation phases include:
