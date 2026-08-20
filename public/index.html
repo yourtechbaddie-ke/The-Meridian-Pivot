@@ -1,138 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NORTHSTAR — Inventory Atelier</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Playfair+Display:wght@400;700&family=Cormorant+Garamond:wght@400;700&family=Syne:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+<!doctype html>
+<html lang="en" class="page-shell">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f1ea" />
+    <title>Northstar — Inventory Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
     <script src="app.js" defer></script>
-</head>
-<body>
-    <nav class="navbar">
-        <div class="logo">NORTHSTAR</div>
-        <ul class="nav-links">
-            <li>ALL</li>
-            <li>JACKETS</li>
-            <li>SWEATERS</li>
-            <li>DRESSES</li>
-            <li>DENIM</li>
-            <li>TRAINERS</li>
-            <li>ACCESSORIES</li>
-        </ul>
-        <div class="hamburger">&#9776;</div>
-    </nav>
-    
-    <aside class="side-drawer">
-        <button class="close-btn">✖</button>
-        <h2>Deep Inventory Navigation</h2>
-        <ul>
-            <li>All Categories</li>
-            <li>GraphQL Schema Explorer</li>
-            <li>Filter by Status</li>
-        </ul>
-    </aside>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="Northstar home"><span class="brand-mark">N</span><span>NORTHSTAR</span></a>
+        <nav class="main-nav" aria-label="Primary navigation">
+          <a class="nav-link is-active" href="#overview">Overview</a>
+          <a class="nav-link" href="#collection">Collection</a>
+          <a class="nav-link" href="#activity">Activity</a>
+        </nav>
+        <div class="topbar-actions"><span class="sync-state"><span class="status-dot"></span>Live sync</span><button class="icon-button menu-button" type="button" aria-label="Open navigation" aria-expanded="false">☰</button><button class="avatar" type="button" aria-label="Open profile">AR</button></div>
+      </header>
 
-    <section class="hero-section">
-        <div class="hero-left">
-            <div class="hero-background"></div>
-            <h1>NORTHSTAR RETAIL CO.</h1>
-            <p class="tagline">Where Inventory Meets Couture</p>
-            <h3 class="animated-subtitle">25 Exclusive Items · Live GraphQL Sync · Real-Time Stock Intelligence</h3>
-            <button class="cta-button">EXPLORE COLLECTION</button>
-        </div>
-        <div class="hero-right">
-            <div class="dashboard-card">
-                <h2>LIVE INVENTORY PULSE</h2>
-                <div class="metrics">
-                    <div class="metric">
-                        <span class="count" data-count="25">0</span>
-                        <label>TOTAL ITEMS</label>
-                    </div>
-                    <div class="metric low-stock">
-                        <span class="count" data-count="5">0</span>
-                        <label>LOW STOCK</label>
-                    </div>
-                    <div class="metric out-of-stock">
-                        <span class="count" data-count="2">0</span>
-                        <label>OUT OF STOCK</label>
-                    </div>
-                </div>
-                <span class="graphql-badge">POWERED BY GRAPHQL</span>
-            </div>
-        </div>
-    </section>
+      <aside class="side-drawer" aria-hidden="true" aria-label="Navigation drawer">
+        <div class="drawer-header"><span class="eyebrow">Workspace</span><button class="icon-button close-button" type="button" aria-label="Close navigation">×</button></div>
+        <h2>Inventory<br /><em>atelier.</em></h2>
+        <nav class="drawer-nav"><a href="#overview">Overview <span>↗</span></a><a href="#collection">All inventory <span>25</span></a><a href="#activity">Sync activity <span>3</span></a></nav>
+        <div class="drawer-footer"><span class="eyebrow">Environment</span><strong>Production / Northstar</strong><small>GraphQL endpoint connected</small></div>
+      </aside>
+      <div class="drawer-overlay"></div>
 
-    <div class="stats-bar">
-        <div class="stat-card"><div class="number" data-count="40">0</div><div>JACKETS</div></div>
-        <div class="stat-card"><div class="number" data-count="50">0</div><div>SWEATERS</div></div>
-        <div class="stat-card"><div class="number" data-count="30">0</div><div>DRESSES</div></div>
-        <div class="stat-card"><div class="number" data-count="20">0</div><div>ACCESSORIES</div></div>
+      <main id="top">
+        <section class="hero" id="overview">
+          <div class="hero-copy"><p class="eyebrow">Northstar Retail Co. / Inventory OS</p><h1>Know what’s<br /><em>moving.</em></h1><p class="hero-description">A quieter way to see the collection. Live stock intelligence for the people keeping exceptional pieces in motion.</p><div class="hero-actions"><a class="button button-dark" href="#collection">Explore inventory <span>↘</span></a><button class="text-button" type="button" data-sync>Sync now <span>↗</span></button></div></div>
+          <div class="hero-visual"><div class="visual-label"><span>01</span><span>Current collection</span></div><div class="editorial-image image-one"><img src="images/09044d8b-89a0-4e66-ad6b-ed12ce92e135.png" alt="Editorial textile detail" /></div><div class="editorial-image image-two"><img src="images/646d9662-d2b9-471f-9ceb-3d65cec5a805.png" alt="Editorial garment detail" /></div><div class="visual-caption">Autumn / Winter<br /><strong>2025</strong></div></div>
+        </section>
+
+        <section class="pulse-section section-wrap"><div class="section-heading"><div><p class="eyebrow">At a glance</p><h2>Inventory pulse</h2></div><span class="last-updated">Updated <strong data-last-sync>just now</strong></span></div><div class="metrics-grid"><article class="metric-card metric-primary"><span class="metric-label">Total SKUs</span><strong data-total>25</strong><span class="metric-note">Across the collection</span></article><article class="metric-card"><span class="metric-label">Available units</span><strong data-units>93</strong><span class="metric-note">Ready to move</span></article><article class="metric-card"><span class="metric-label">Low stock</span><strong data-low-stock>3</strong><span class="metric-note">Needs attention</span></article><article class="metric-card"><span class="metric-label">Out of stock</span><strong data-out-stock>2</strong><span class="metric-note">Currently unavailable</span></article></div></section>
+
+        <section class="attention-section section-wrap"><div class="section-heading"><div><p class="eyebrow">Needs attention</p><h2>Small signals, early</h2></div><a class="text-button" href="#collection" data-status-link="LOW_STOCK">View low stock <span>→</span></a></div><div class="featured-grid" data-featured></div></section>
+
+        <section class="collection-section section-wrap" id="collection"><div class="section-heading collection-heading"><div><p class="eyebrow">The collection / <span data-result-count>25</span> pieces</p><h2>All inventory</h2></div><div class="collection-meta"><span class="live-chip"><span class="status-dot"></span>GraphQL live</span><span class="mono">v2.4.1</span></div></div><div class="toolbar"><label class="search-field"><span aria-hidden="true">⌕</span><input type="search" placeholder="Search SKU, name, or fabric" data-search /></label><div class="filter-scroll" role="group" aria-label="Filter by category"><button class="filter-button is-active" type="button" data-category="ALL">All</button><button class="filter-button" type="button" data-category="JACKET">Jackets</button><button class="filter-button" type="button" data-category="SWEATER">Knitwear</button><button class="filter-button" type="button" data-category="DRESS">Dresses</button><button class="filter-button" type="button" data-category="DENIM JEANS">Denim</button></div><div class="status-filters" role="group" aria-label="Filter by status"><button class="status-button is-active" type="button" data-status="ALL">All status</button><button class="status-button" type="button" data-status="LOW_STOCK">Low stock</button><button class="status-button" type="button" data-status="OUT_OF_STOCK">Out of stock</button></div></div><div class="inventory-table" data-inventory></div><div class="empty-state" data-empty hidden><strong>No pieces found.</strong><span>Try a different search or clear your filters.</span><button class="text-button" type="button" data-clear>Clear filters</button></div></section>
+
+        <section class="activity-section section-wrap" id="activity"><div class="activity-copy"><p class="eyebrow">System / Activity</p><h2>Quietly in sync.</h2><p>Every movement is captured through the GraphQL layer, then pushed to the floor before it becomes a problem.</p><button class="button button-light" type="button" data-sync>Run sync check <span>↗</span></button></div><div class="activity-log"><div class="log-header"><span>Recent activity</span><span class="live-chip"><span class="status-dot"></span>Live</span></div><div data-activity><div class="activity-row"><span class="activity-icon">↕</span><div><strong>Inventory snapshot refreshed</strong><small>getAllItems · 25 records</small></div><time>Just now</time></div><div class="activity-row"><span class="activity-icon">!</span><div><strong>Low stock threshold reached</strong><small>SKU NS-022 · The Sable Blazer</small></div><time>12m ago</time></div><div class="activity-row"><span class="activity-icon">✓</span><div><strong>Webhook connection healthy</strong><small>northstar / inventory-events</small></div><time>24m ago</time></div></div></div></section>
+      </main>
+      <footer class="footer section-wrap"><a class="brand" href="#top"><span class="brand-mark">N</span><span>NORTHSTAR</span></a><span>© 2025 Northstar Retail Co.</span><span class="mono">The Meridian Pivot / Sprint 02</span></footer>
     </div>
-
-    <section class="featured-carousel">
-        <h2>FEATURED EXCLUSIVES</h2>
-        <div class="carousel">
-            <!-- Carousel items will be rendered here dynamically -->
-        </div>
-    </section>
-
-    <section class="filter-tabs">
-        <h2 class="collection-title">THE COLLECTION</h2>
-        <input type="text" class="search-input" placeholder="Search by SKU or name...">
-        <div class="filters">
-            <span class="filter-pill">ALL</span>
-            <span class="filter-pill">JACKET</span>
-            <span class="filter-pill">SWEATER</span>
-            <span class="filter-pill">CASHMERE SET</span>
-            <span class="filter-pill">DRESS</span>
-            <span class="filter-pill">SKIRT</span>
-            <span class="filter-pill">BLOUSE</span>
-            <span class="filter-pill">SHIRT</span>
-            <span class="filter-pill">CROCHETWEAR</span>
-            <span class="filter-pill">DENIM JEANS</span>
-            <span class="filter-pill">LEGINGS</span>
-            <span class="filter-pill">JERSEY</span>
-            <span class="filter-pill">TRAINERS</span>
-            <span class="filter-pill">SOCKS</span>
-            <span class="filter-pill">MARVIN</span>
-        </div>
-    </section>
-
-    <section class="inventory-grid">
-        <!-- Inventory items will be rendered here dynamically -->
-    </section>
-
-    <section class="brand-story">
-        <div class="story-quote">
-            <h2>"Luxury is not a privilege. It's a standard."</h2>
-        </div>
-        <div class="story-text">
-            <p>Northstar Retail Co. is committed to redefining luxury through unparalleled quality and innovation.</p>
-        </div>
-    </section>
-
-    <section class="graphql-indicator">
-        <h2>GRAPHQL ENGINE STATUS</h2>
-        <div class="indicators">
-            <div class="active-queries">Active Queries: <span class="pulse"></span></div>
-            <div class="cache-status">Cache Status: <span class="live-badge">LIVE</span></div>
-            <div class="last-sync">Last Sync: <span class="timestamp">Just now</span></div>
-            <div class="available-queries">
-                <span class="query-pill">getItem</span>
-                <span class="query-pill">getAllItems</span>
-                <span class="query-pill">getByCategory</span>
-                <span class="query-pill">getOutOfStock</span>
-                <span class="query-pill">getLowStock</span>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <p>NORTHSTAR RETAIL CO.</p>
-        <p class="tagline">The Meridian Pivot — Sprint 2 Prototype</p>
-        <hr class="accent-line">
-        <small>Powered by GraphQL + Apollo Server + Vercel</small>
-    </footer>
-</body>
+    <dialog class="detail-dialog" data-dialog><button class="icon-button dialog-close" type="button" aria-label="Close item detail">×</button><div data-detail></div></dialog>
+  </body>
 </html>

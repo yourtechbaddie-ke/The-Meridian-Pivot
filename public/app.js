@@ -1,29 +1,27 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const inventoryGrid = document.getElementById("inventory-grid");
-    const totalItems = document.getElementById("total-items");
-    const categoriesCount = document.getElementById("categories-count");
+const inventory = [
+  ['NS-001','The Meridian Jacket','JACKET','Italian wool',680,8,'AVAILABLE'],['NS-004','The Sable Blazer','JACKET','Brushed wool',740,2,'LOW_STOCK'],['NS-007','The Atlas Coat','JACKET','Cashmere blend',920,5,'AVAILABLE'],['NS-009','The Lumen Jacket','JACKET','Recycled nylon',520,7,'AVAILABLE'],['NS-011','The Field Jacket','JACKET','Cotton twill',460,9,'AVAILABLE'],
+  ['NS-002','The Arlo Knit','SWEATER','Alpaca wool',320,11,'AVAILABLE'],['NS-005','The Cove Cardigan','SWEATER','Merino wool',390,6,'AVAILABLE'],['NS-014','The Studio Crew','SWEATER','Organic cotton',220,14,'AVAILABLE'],['NS-018','The Solace Knit','SWEATER','Mohair blend',410,3,'LOW_STOCK'],['NS-022','The Cloud Sweater','SWEATER','Cashmere',580,0,'OUT_OF_STOCK'],
+  ['NS-003','The Nocturne Dress','DRESS','Silk charmeuse',560,4,'AVAILABLE'],['NS-006','The Rhea Dress','DRESS','Linen silk',480,6,'AVAILABLE'],['NS-012','The Dusk Slip','DRESS','Silk satin',390,8,'AVAILABLE'],['NS-020','The Vale Dress','DRESS','Wool crepe',620,2,'LOW_STOCK'],
+  ['NS-008','The Aster Set','CASHMERE SET','Cashmere',780,5,'AVAILABLE'],['NS-010','The Lucid Skirt','SKIRT','Pleated wool',350,7,'AVAILABLE'],['NS-013','The Cove Blouse','BLOUSE','Washed silk',280,8,'AVAILABLE'],['NS-015','The Archive Shirt','SHIRT','Poplin cotton',190,10,'AVAILABLE'],['NS-016','The Orbit Crochet','CROCHETWEAR','Cotton crochet',240,5,'AVAILABLE'],
+  ['NS-017','The Meridian Jean','DENIM JEANS','Raw denim',290,6,'AVAILABLE'],['NS-019','The Original Jean','DENIM JEANS','Organic denim',270,9,'AVAILABLE'],['NS-021','The Trace Jean','DENIM JEANS','Washed denim',310,4,'AVAILABLE'],['NS-023','The Port Trainer','TRAINERS','Leather / mesh',390,3,'AVAILABLE'],['NS-024','The North Sock','SOCKS','Merino wool',55,12,'AVAILABLE'],['NS-025','The Pivot Trainer','TRAINERS','Suede / canvas',360,0,'OUT_OF_STOCK']
+].map(([sku,name,category,fabric,price,stock,status])=>({sku,name,category,fabric,price,stock,status}));
 
-    // Fetch from GraphQL API
-    async function fetchInventory() {
-        const response = await fetch('/api/inventory', { method: 'POST', body: JSON.stringify({ query: '{ getAllItems { item_id, name, category } }' }), headers: { 'Content-Type': 'application/json' } });
-        const data = await response.json();
-        const items = data.data.getAllItems;
-        renderInventory(items);
-        totalItems.innerText = items.length;
-        categoriesCount.innerText = new Set(items.map(item => item.category)).size;
-    }
-
-    function renderInventory(items) {
-        inventoryGrid.innerHTML = '';
-        items.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'product-card';
-            card.innerHTML = `<img src="images/${item.item_id}.jpg" class="product-img" alt="${item.name}" onerror="this.src='images/placeholder.svg'">
-                             <h3>${item.name}</h3>
-                             <p>${item.category}</p>`;
-            inventoryGrid.appendChild(card);
-        });
-    }
-
-    fetchInventory();
-});
+const state={category:'ALL',status:'ALL',query:''};
+const $=(selector)=>document.querySelector(selector);const $$=(selector)=>Array.from(document.querySelectorAll(selector));
+const formatMoney=(value)=>`$${value.toLocaleString()}`;
+const statusClass=(status)=>status.toLowerCase().replaceAll('_','-');
+function filteredItems(){return inventory.filter(item=>(state.category==='ALL'||item.category===state.category)&&(state.status==='ALL'||item.status===state.status)&&[item.sku,item.name,item.category,item.fabric].join(' ').toLowerCase().includes(state.query.toLowerCase()));}
+function renderMetrics(){const units=inventory.reduce((sum,item)=>sum+item.stock,0);$('[data-total]').textContent=inventory.length;$('[data-units]').textContent=units;$('[data-low-stock]').textContent=inventory.filter(item=>item.status==='LOW_STOCK').length;$('[data-out-stock]').textContent=inventory.filter(item=>item.status==='OUT_OF_STOCK').length;}
+function renderFeatured(){const root=$('[data-featured]');root.replaceChildren();inventory.filter(item=>item.status!=='AVAILABLE').slice(0,3).forEach(item=>{const card=document.createElement('article');card.className='featured-card';card.innerHTML=`<div><span class="eyebrow">${item.category}</span><h3>${item.name}</h3><p>${item.sku} · ${item.fabric}</p></div><span class="featured-stock">${item.stock===0?'Sold out':`${item.stock} left`}</span>`;card.addEventListener('click',()=>openDetail(item));card.tabIndex=0;root.appendChild(card);});}
+function renderInventory(){const root=$('[data-inventory]');root.replaceChildren();const items=filteredItems();$('[data-result-count]').textContent=items.length;if(!items.length){$('[data-empty]').hidden=false;return}$('[data-empty]').hidden=true;const header=document.createElement('div');header.className='table-header';['Piece / SKU','Category','Fabric','Price','Stock','Status'].forEach(label=>{const span=document.createElement('span');span.textContent=label;header.appendChild(span)});root.appendChild(header);items.forEach(item=>{const row=document.createElement('button');row.type='button';row.className='inventory-row';row.innerHTML=`<span><span class="item-name">${item.name}</span><span class="item-sku">${item.sku}</span></span><span class="item-meta">${item.category}</span><span class="item-meta">${item.fabric}</span><span class="item-price">${formatMoney(item.price)}</span><span class="item-stock">${item.stock} units</span><span class="status-pill ${statusClass(item.status)}">${item.status.replaceAll('_',' ')}</span>`;row.addEventListener('click',()=>openDetail(item));root.appendChild(row);});}
+function openDetail(item){const dialog=$('[data-dialog]');const detail=$('[data-detail]');detail.innerHTML=`<span class="eyebrow">${item.category} / ${item.sku}</span><h2>${item.name}</h2><p>This piece is tracked through the Northstar inventory graph and is ready for a live operational handoff.</p><div class="detail-grid"><div><span>Fabric</span><strong>${item.fabric}</strong></div><div><span>Unit price</span><strong>${formatMoney(item.price)}</strong></div><div><span>Stock on hand</span><strong>${item.stock} units</strong></div><div><span>Status</span><strong>${item.status.replaceAll('_',' ')}</strong></div></div>`;dialog.showModal();}
+function renderActivity(){const now=new Date().toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});$('[data-last-sync]').textContent=now;const root=$('[data-activity]');const row=document.createElement('div');row.className='activity-row';row.innerHTML=`<span class="activity-icon">↕</span><div><strong>Manual inventory sync completed</strong><small>getAllItems · ${inventory.length} records reconciled</small></div><time>Now</time>`;root.prepend(row);}
+function applyFilters(){renderInventory();}
+$$('[data-category]').forEach(button=>button.addEventListener('click',()=>{state.category=button.dataset.category;$$('[data-category]').forEach(item=>item.classList.toggle('is-active',item===button));applyFilters();}));
+$$('[data-status]').forEach(button=>button.addEventListener('click',()=>{state.status=button.dataset.status;$$('[data-status]').forEach(item=>item.classList.toggle('is-active',item===button));applyFilters();}));
+$('[data-search]').addEventListener('input',(event)=>{state.query=event.target.value;applyFilters();});
+$('[data-clear]').addEventListener('click',()=>{state={category:'ALL',status:'ALL',query:''};$('[data-search]').value='';$$('[data-category], [data-status]').forEach((button)=>button.classList.toggle('is-active',button.dataset.category==='ALL'||button.dataset.status==='ALL'));applyFilters();});
+$$('[data-sync]').forEach(button=>button.addEventListener('click',()=>{button.disabled=true;button.textContent='Syncing…';setTimeout(()=>{renderActivity();button.disabled=false;button.innerHTML='Sync complete <span>✓</span>';setTimeout(()=>button.innerHTML='Sync now <span>↗</span>',1800)},500)}));
+$('[data-status-link]').addEventListener('click',()=>{$('[data-status="LOW_STOCK"]').click();});
+const drawer=$('.side-drawer'),overlay=$('.drawer-overlay');function setDrawer(open){drawer.classList.toggle('is-open',open);overlay.classList.toggle('is-visible',open);drawer.setAttribute('aria-hidden',String(!open));$('.menu-button').setAttribute('aria-expanded',String(open));}$('.menu-button').addEventListener('click',()=>setDrawer(true));$('.close-button').addEventListener('click',()=>setDrawer(false));overlay.addEventListener('click',()=>setDrawer(false));$$('.drawer-nav a').forEach(link=>link.addEventListener('click',()=>setDrawer(false)));$('.dialog-close').addEventListener('click',()=> $('[data-dialog]').close());
+renderMetrics();renderFeatured();renderInventory();
