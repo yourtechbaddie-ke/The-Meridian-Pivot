@@ -1,0 +1,9 @@
+{
+  "name": "the-meridian-pivot",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "python3 -m http.server 3000 --directory public",
+    "start": "python3 -m http.server 3000 --directory public"
+  }
+}
