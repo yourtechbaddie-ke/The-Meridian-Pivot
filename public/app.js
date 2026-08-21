@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
         items.forEach(item => {
             const card = document.createElement('div');
             card.className = 'product-card';
-            card.innerHTML = `<img src="images/${item.item_id}.jpg" class="product-img" alt="${item.name}" onerror="this.src='images/placeholder.svg'">
+            card.innerHTML = `<img src="images/${item.item_id}.jpg" class="product-img" alt="${item.name}" onerror="this.src='public/product.images'">
                              <h3>${item.name}</h3>
                              <p>${item.category}</p>`;
             inventoryGrid.appendChild(card);
