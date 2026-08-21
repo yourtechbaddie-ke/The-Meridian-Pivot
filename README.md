@@ -16,7 +16,7 @@ Full Folder Structure
 | day4-5/webhook_refactor.md           | Refactored code implementing webhook for real-time inventory. |
 | day5/scope_delta_analysis.md          | Analysis of scope changes during the sprint.                 |
 | package.json                          | Node.js project configuration file.                          |
-| vercel.json                            | Vercel configuration for deployment.                          |
+| replit.json                            | Replit configuration and publisher.                          |
 | index.js                               | Entry point of the Node.js application.                      |
 | schema.js                              | GraphQL schema definitions.                                   |
 | resolvers.js                           | Resolvers for handling GraphQL queries through GraphQL API.  |
@@ -27,7 +27,7 @@ Full Folder Structure
 | public/styles.css                      | CSS styles for the frontend.                                 |
 | public/app.js                          | JavaScript for managing frontend interactions.                |
 
-Deploy to Vercel
+Deploy to Replit
 
 View the Prototype
 The frontend UI features a luxury design with a responsive layout, showcasing an inventory dashboard, real-time statistics using GraphQL, and interactive filter/search functionality.
