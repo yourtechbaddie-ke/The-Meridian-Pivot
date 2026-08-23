@@ -22,12 +22,6 @@
 - [x] GitHub Actions CI is included for the Solstice test suite.
 - [x] Scope Delta Analysis explains dropped, modified, and added work.
 
-## What to submit to PLP
-
-1. Submit the **The-Meridian-Pivot** repository as the consolidated project repository if PLP's submission form asks for one repository link.
-2. If the form allows an additional project/reference link, the existing **Solstice-Events-Co** repository can be supplied as supporting evidence, but the consolidated Meridian repository is the primary submission.
-3. Submit the confidential **Adaptability Index** only through PLP's designated confidential submission mechanism. Do not place it in this public repository.
-4. Before midnight, verify that the repository is public/accessibly shared and that the `main` branch contains the latest commit.
 
 ## Recommended reviewer path
 
