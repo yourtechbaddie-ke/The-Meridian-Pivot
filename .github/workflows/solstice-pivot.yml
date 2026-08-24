@@ -36,9 +36,15 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
-      - name: Verify application starts
-        run: |
-          node -e "import('./src/server.js').then(() => console.log('Application module loaded successfully'))"
+      - name: Verify application module loads
+        env:
+          NODE_ENV: test
+          DB_FILE: ${{ runner.temp }}/solstice-ci.db
+          WEBHOOK_SECRET: ci-test-secret
+        run: node -e "import('./src/server.js').then(() => console.log('Application module loaded successfully'))"
 
       - name: Run test suite
+        env:
+          NODE_ENV: test
+          WEBHOOK_SECRET: ci-test-secret
         run: npm test
