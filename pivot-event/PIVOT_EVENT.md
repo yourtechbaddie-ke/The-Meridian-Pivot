@@ -30,7 +30,7 @@ POST /api/check-in
    ↓
 Atomic/idempotent PRINT_PENDING transition
    ↓
-Print Job ID / queue boundary
+Persistent print_jobs queue boundary
    ↓
 Badge Printer
    ↓
@@ -38,7 +38,7 @@ Signed Webhook
    ↓
 HMAC + timestamp verification
    ↓
-Replay check + job matching
+Replay check + attendee/job matching
    ↓
 CHECKED_IN
 ```
@@ -48,27 +48,32 @@ CHECKED_IN
 - HMAC-SHA256 signatures.
 - Timestamp freshness validation.
 - Timing-safe signature comparison.
+- Raw-body verification before JSON re-serialization.
 - Event-ID replay protection.
 - Current print-job matching.
-- Raw-body verification before JSON is re-serialized.
 
 ### Duplicate and ordering controls
 
-A scan for an attendee already in `PRINT_PENDING` returns the existing job instead of creating another one. A webhook must also carry the attendee's current `jobId`; a stale callback is rejected rather than changing the attendee's state.
+A scan for an attendee already in `PRINT_PENDING` returns the existing job instead of creating another one. The attendee state change and `print_jobs` creation occur transactionally. A webhook must carry the attendee's current `jobId`; a stale callback is rejected rather than changing the attendee's state.
+
+### Demonstration path
+
+The kiosk includes **Simulate printer completion**. This is deliberately a mock vendor adapter: it creates a correctly signed webhook and sends the payload through the same verification and processing logic as the public `/api/webhooks/badge-print` endpoint. It demonstrates the full asynchronous flow without claiming that a real printer vendor is connected.
 
 ## Acceptance mapping
 
 | Pivot Event requirement | Implementation evidence |
 |---|---|
-| Async print model | `src/server.js` creates a print job and returns `202` pending |
+| Async print model | `src/server.js` creates a persistent `print_jobs` record and returns `202` pending |
 | Webhook callback | `POST /api/webhooks/badge-print` |
-| Pending UI | `public/app.js` displays `Printing…` until completion is confirmed |
+| Pending UI | `public/app.js` displays `Printing…` and polls status until completion |
 | Three attendees | `src/database.js` seeds `SOL-001`, `SOL-002`, `SOL-003` |
-| Duplicate-scan protection | `PRINT_PENDING` state returns the existing job |
-| Verified callback | `src/webhook-verification.js` |
+| Duplicate-scan protection | `PRINT_PENDING` returns the existing job |
+| Verified callback | `src/webhook-verification.js` + raw-body middleware |
 | Replay protection | `processed_webhooks` table |
-| Out-of-order protection | webhook `jobId` must match current `print_job_id` |
-| Automated verification tests | `tests/webhook.test.js` |
+| Out-of-order protection | webhook `jobId` must match the current `print_job_id` and `print_jobs` record |
+| Automated verification tests | `tests/webhook.test.js` and `tests/solstice-flow.test.js` |
+| End-to-end demonstration | `/api/demo/printer-complete` + kiosk Simulate button |
 
 ## Scenario boundary
 
