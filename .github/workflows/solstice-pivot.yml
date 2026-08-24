@@ -9,21 +9,36 @@ on:
     paths:
       - 'pivot-event/solstice-events-co/**'
       - '.github/workflows/solstice-pivot.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: solstice-pivot-ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
     defaults:
       run:
         working-directory: pivot-event/solstice-events-co
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 24
+          cache: npm
+          cache-dependency-path: pivot-event/solstice-events-co/package.json
+
       - name: Install dependencies
-        run: npm install
-      - name: Run tests
+        run: npm install --no-audit --no-fund
+
+      - name: Verify application starts
+        run: |
+          node -e "import('./src/server.js').then(() => console.log('Application module loaded successfully'))"
+
+      - name: Run test suite
         run: npm test
