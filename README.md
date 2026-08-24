@@ -6,6 +6,15 @@ This repository is the consolidated submission for the **Meridian Pivot** simula
 
 > **Important scenario boundary:** Northstar Retail Co. and Solstice Events Co. are treated as two client scenarios in this repository. The Northstar material documents the original inventory exercise and its polling-to-webhook transition. The Solstice material documents the later Pivot Event handout and its synchronous-printer-to-asynchronous-queue/webhook requirement. They are not presented as the same business system.
 
+## Live Prototype Links
+
+For instructor/reviewer evaluation, the two client scenarios have separate live prototypes:
+
+- **Northstar Inventory Atelier:** https://northstar-retail-co--yourtechbaddie.replit.app
+- **Solstice Events Co.:** https://solstice-events-co.hatchable.site/
+
+> **Review note:** These are intentionally separate prototypes. Northstar represents the original inventory scenario and its webhook refactor, while Solstice Events Co. represents the later Pivot Event MVP. The two prototypes should not be merged into one business application.
+
 ## What this repository demonstrates
 
 1. **Assignment 1 — Independent Learning & Blocker Log**
