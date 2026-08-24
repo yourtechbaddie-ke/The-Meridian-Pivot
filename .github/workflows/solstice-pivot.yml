@@ -29,22 +29,21 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: 24
-          cache: npm
-          cache-dependency-path: pivot-event/solstice-events-co/package.json
+          node-version: 22
 
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: npm install --no-audit --no-fund --package-lock=false
 
       - name: Verify application module loads
         env:
           NODE_ENV: test
-          DB_FILE: ${{ runner.temp }}/solstice-ci.db
+          DB_FILE: ${{ runner.temp }}/solstice-module-load.db
           WEBHOOK_SECRET: ci-test-secret
         run: node -e "import('./src/server.js').then(() => console.log('Application module loaded successfully'))"
 
       - name: Run test suite
         env:
           NODE_ENV: test
+          DB_FILE: ${{ runner.temp }}/solstice-test.db
           WEBHOOK_SECRET: ci-test-secret
         run: npm test
