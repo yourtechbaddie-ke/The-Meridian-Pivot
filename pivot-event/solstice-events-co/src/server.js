@@ -14,8 +14,29 @@ app.use(express.json({ verify: (req, _res, buf) => { req.rawBody = buf.toString(
 function newId(prefix) { return `${prefix}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`; }
 function attendeeFor(code) { return db.prepare('SELECT * FROM attendees WHERE attendee_code=?').get(code); }
 
+app.get('/api/dashboard', (_req, res) => {
+  const totals = db.prepare(`SELECT COUNT(*) total, SUM(status='CHECKED_IN') checkedIn, SUM(status='PRINT_PENDING') pending, SUM(status='PRINT_FAILED') failed FROM attendees`).get();
+  const recent = db.prepare(`SELECT attendee_code,name,ticket_type,status,updated_at FROM attendees ORDER BY updated_at DESC,id DESC LIMIT 8`).all();
+  const printStats = db.prepare(`SELECT COUNT(*) jobs, SUM(status='COMPLETED') completed, SUM(status='QUEUED') queued, SUM(status='FAILED') failed FROM print_jobs`).get();
+  res.json({
+    event: { name: 'The Golden Hour Gala', date: '18 September 2026', venue: 'The Nocturne House · Nairobi', status: 'LIVE', readiness: 92, guests: 30, vendors: 18 },
+    totals: { total: totals.total || 0, checkedIn: totals.checkedIn || 0, pending: totals.pending || 0, failed: totals.failed || 0 },
+    printStats: { jobs: printStats.jobs || 0, completed: printStats.completed || 0, queued: printStats.queued || 0, failed: printStats.failed || 0 },
+    recent
+  });
+});
+
+app.get('/api/events', (_req, res) => {
+  res.json({ events: [
+    { id:'EVT-GLD-26', name:'The Golden Hour Gala', date:'18 Sep 2026', venue:'The Nocturne House', guests:142, readiness:92, status:'LIVE', category:'Private Gala' },
+    { id:'EVT-VEL-26', name:'Velvet & Vows', date:'03 Oct 2026', venue:'Maison Étoile', guests:96, readiness:84, status:'PLANNING', category:'Wedding' },
+    { id:'EVT-ARC-26', name:'Arc & Afterglow', date:'17 Oct 2026', venue:'The Atrium', guests:210, readiness:71, status:'PLANNING', category:'Brand Experience' },
+    { id:'EVT-MON-26', name:'The Monochrome Dinner', date:'31 Oct 2026', venue:'Nocturne Terrace', guests:64, readiness:63, status:'PLANNING', category:'Private Dinner' }
+  ]});
+});
+
 app.get('/api/attendees', (_req, res) => {
-  res.json({ attendees: db.prepare(`SELECT a.attendee_code,a.name,a.status,a.print_job_id,a.updated_at,p.status AS print_status FROM attendees a LEFT JOIN print_jobs p ON p.job_id=a.print_job_id ORDER BY a.attendee_code`).all() });
+  res.json({ attendees: db.prepare(`SELECT a.attendee_code,a.name,a.ticket_type,a.event_name,a.status,a.print_job_id,a.updated_at,p.status AS print_status FROM attendees a LEFT JOIN print_jobs p ON p.job_id=a.print_job_id ORDER BY a.id`).all() });
 });
 
 app.get('/api/attendee-status', (req, res) => {
@@ -44,7 +65,6 @@ app.post('/api/check-in', (req, res) => {
     return true;
   });
   if (!createJob()) return res.status(409).json({ error: 'Check-in changed concurrently; please retry.' });
-
   return res.status(202).json({ status: 'pending', attendee: attendee.name, jobId, eventId, message: 'Badge printing queued. Waiting for verified webhook confirmation.', demoWebhookAvailable: DEMO_MODE });
 });
 
