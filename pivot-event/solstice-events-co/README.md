@@ -1,8 +1,12 @@
-# Solstice Events Co. — Async Check-In MVP
+# Solstice Events Co. — Luxury Event Operations MVP
 
-This is the runnable implementation for the Meridian **Pivot Event** scenario.
+Solstice is the event-operations product for the Meridian Pivot scenario. The MVP combines a luxury operations command centre with an asynchronous badge check-in workflow.
 
-The kiosk starts an asynchronous badge-print job, shows **Printing…**, and only reaches **Checked In** after a verified printer webhook.
+## Product direction
+
+**Solstice Nocturne** — Midnight Plum `#21121D`, Deep Burgundy `#5A1E2A`, Champagne `#E7D1B0`, Warm Ivory `#F8F3EC`, Soft Taupe `#B9AAA0`, and Ink `#171316`.
+
+The interface is intentionally positioned as a premium event-operations workspace rather than a generic student dashboard.
 
 ## What this solves
 
@@ -12,14 +16,26 @@ The kiosk starts an asynchronous badge-print job, shows **Printing…**, and onl
 - Webhook replay → processed event IDs.
 - Out-of-order confirmations → webhook `jobId` must match the attendee's current print job.
 - UI accuracy → `CHECKED_IN` is only reached after a valid `completed` webhook.
+- Operational visibility → dashboard metrics, event readiness, activity history and guest records.
 
 ## Stack
 
 - Node.js + Express
 - SQLite via better-sqlite3
-- Vanilla HTML/CSS/JavaScript kiosk
+- Vanilla HTML/CSS/JavaScript
 - Node `crypto` HMAC-SHA256
 - Node test runner
+
+## Synthetic MVP data
+
+The database seeds **30 entirely fictional demo attendees** for the Golden Hour Gala. Names and email addresses are synthetic and use the reserved `.invalid` domain; they are not intended to represent real people or contact details.
+
+The UI also presents a fictional portfolio of four events:
+
+- The Golden Hour Gala — LIVE — 92% ready
+- Velvet & Vows — PLANNING — 84% ready
+- Arc & Afterglow — PLANNING — 71% ready
+- The Monochrome Dinner — PLANNING — 63% ready
 
 ## Run locally
 
@@ -38,11 +54,15 @@ Run tests:
 npm test
 ```
 
-## Demo attendees
+## Demo check-in
 
-- `SOL-001` — Amina Wanjiku
-- `SOL-002` — Brian Otieno
-- `SOL-003` — Claire Njeri
+Use any seeded code such as `SOL-001` through `SOL-030`.
+
+1. Enter a guest code.
+2. The guest moves to `PRINT_PENDING` and receives a unique print job.
+3. Use **Simulate verified printer callback** in demo mode.
+4. The signed callback passes HMAC, replay and job-matching checks.
+5. The guest becomes `CHECKED_IN` only after verified completion.
 
 ## Webhook contract
 
@@ -73,27 +93,27 @@ Payload:
 ## Architecture
 
 ```text
-QR Kiosk
-   ↓
+Guest QR Scan
+      ↓
 Check-In API
-   ↓
-Atomic/idempotent state transition
-   ↓
-Print Request / Queue Boundary
-   ↓
+      ↓
+Atomic / Idempotent State Transition
+      ↓
+Print Queue Boundary
+      ↓
 Badge Printer
-   ↓
+      ↓
 Signed Webhook
-   ↓
+      ↓
 HMAC + Timestamp Verification
-   ↓
+      ↓
 Replay + Job Matching Checks
-   ↓
+      ↓
 CHECKED_IN
 ```
 
-See the `docs/` folder for architecture, API, webhook-security, and deployment details.
+See `docs/` for architecture, API, webhook-security, acceptance tests and deployment notes.
 
 ## Production note
 
-The MVP uses a deterministic mock printer adapter. A production integration should replace that adapter with the selected badge-printer vendor's queue/API while preserving webhook verification, idempotency, replay protection, and job matching.
+The MVP uses a deterministic mock printer adapter. A production integration should replace that adapter with the selected badge-printer vendor's queue/API while preserving webhook verification, idempotency, replay protection and job matching.
