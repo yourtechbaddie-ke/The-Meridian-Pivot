@@ -1,25 +1,59 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Solstice Events Co. — Check-In</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#21121D">
+  <title>Solstice Events Co. — Operations Command Centre</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <main class="shell"><section class="card">
-    <header><div><div class="brand">SOLSTICE EVENTS CO.</div><h1>Conference Check-In</h1></div><span class="tag">ASYNC PRINT • VERIFIED WEBHOOK</span></header>
-    <div class="content">
-      <section class="panel">
-        <p class="eyebrow">KIOSK</p><h2>Scan attendee QR</h2>
-        <p>Enter a demo attendee code to simulate a QR scan. The kiosk remains <b>Printing…</b> until the verified printer callback completes the current job.</p>
-        <div class="form"><input id="code" placeholder="SOL-001" autocomplete="off"><button id="check">Check In</button></div>
-        <div id="status" class="status"><b>Ready</b><span>Waiting for an attendee scan.</span></div>
-        <div id="actions" class="actions" hidden><button id="simulate">Simulate printer completion</button><span>Uses the same HMAC signing + verification path as the vendor webhook.</span></div>
-        <div class="demos"><button data-code="SOL-001">SOL-001 · Amina Wanjiku</button><button data-code="SOL-002">SOL-002 · Brian Otieno</button><button data-code="SOL-003">SOL-003 · Claire Njeri</button></div>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-lockup"><span class="brand-mark">S</span><div><strong>SOLSTICE</strong><small>EVENTS CO.</small></div></div>
+      <div class="workspace"><span>OPERATIONS WORKSPACE</span><b>Live command centre</b></div>
+      <nav>
+        <a class="active" href="#overview">⌂ <span>Command Centre</span></a>
+        <a href="#events">◈ <span>Events</span><em>4</em></a>
+        <a href="#guests">○ <span>Guests</span></a>
+        <a href="#timeline">◷ <span>Timeline</span></a>
+        <a href="#vendors">◇ <span>Vendors</span></a>
+        <a href="#activity">⌁ <span>Activity</span></a>
+      </nav>
+      <div class="sidebar-bottom"><a href="#settings">⚙ <span>Settings</span></a><div class="operator"><span>SO</span><div><b>Solstice Ops</b><small>Administrator</small></div></div></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar"><div><span class="crumb">SOLSTICE / COMMAND CENTRE</span><h1>Good morning, <i>Solstice.</i></h1></div><div class="top-actions"><span class="live"><i></i> LIVE SYSTEM</span><button class="icon-btn" aria-label="Notifications">♢</button><button class="profile">SO</button></div></header>
+
+      <section id="overview" class="hero-grid">
+        <div class="hero-copy"><span class="eyebrow">FEATURED EVENT · 18 SEPTEMBER 2026</span><h2>The Golden <i>Hour</i> Gala</h2><p>The Nocturne House · Nairobi &nbsp; / &nbsp; Private Gala</p><div class="hero-meta"><div><small>EVENT READINESS</small><strong>92<span>%</span></strong></div><div class="progress"><div style="width:92%"></div></div><span class="pill success">On track</span></div></div>
+        <div class="hero-stat"><span>GUESTS</span><strong id="heroGuests">142</strong><small>confirmed for tonight's operation</small><div class="mini-ring"><span>92%</span></div></div>
       </section>
-      <aside><p class="eyebrow">FLOW</p><h2>Verified async workflow</h2><div class="flow"><i>QR Scan</i><em>↓</em><i>Idempotent Check-In</i><em>↓</em><i>Queued Print Job</i><em>↓</em><i>Badge Printer</i><em>↓</em><i>Signed Webhook</i><em>↓</em><i>HMAC + Replay + Job Checks</i><em>↓</em><i>CHECKED IN ✓</i></div></aside>
-    </div>
-    <footer>Duplicate scans reuse the active job. Stale callbacks cannot complete a newer job. Webhook replays are safely ignored.</footer>
-  </section></main>
+
+      <section class="metrics" aria-label="Operational metrics">
+        <article><span>REGISTERED GUESTS</span><strong id="registered">30</strong><small>Demo event records</small></article>
+        <article><span>CHECKED IN</span><strong id="checkedIn">0</strong><small><b class="positive">Live</b> verified entries</small></article>
+        <article><span>PRINT QUEUE</span><strong id="queue">0</strong><small>Awaiting badge confirmation</small></article>
+        <article><span>READINESS</span><strong>92<span>%</span></strong><small><b class="positive">+6%</b> since yesterday</small></article>
+      </section>
+
+      <section id="events" class="section-head"><div><span class="eyebrow">PORTFOLIO</span><h3>Events in motion</h3></div><button class="outline">View all events →</button></section>
+      <section class="event-grid" id="eventGrid"></section>
+
+      <section class="lower-grid">
+        <div id="guests" class="panel-card checkin-panel"><div class="panel-title"><div><span class="eyebrow">LIVE CHECK-IN</span><h3>Guest arrival desk</h3></div><span class="secure">⌁ VERIFIED</span></div><p class="muted">Scan a demo attendee code. The badge stays <b>Printing…</b> until a signed printer webhook confirms completion.</p><div class="checkin-form"><input id="code" placeholder="Enter guest code · SOL-001" autocomplete="off"><button id="check">Begin check-in</button></div><div id="status" class="status"><b>Ready for arrival</b><span>Waiting for an attendee scan.</span></div><div id="actions" class="actions" hidden><button id="simulate">Simulate verified printer callback</button><span>Demo follows the same HMAC verification path.</span></div><div class="demo-list" id="demoList"></div></div>
+        <div id="activity" class="panel-card activity-panel"><div class="panel-title"><div><span class="eyebrow">SYSTEM ACTIVITY</span><h3>Recent orchestration</h3></div><button class="dots">•••</button></div><div class="activity-list" id="activityList"></div></div>
+      </section>
+
+      <section id="timeline" class="timeline-card"><div><span class="eyebrow">EVENT RUNWAY</span><h3>Golden Hour production timeline</h3></div><div class="timeline"><div class="done"><b>Venue locked</b><span>12 Aug</span></div><div class="done"><b>Vendor confirmations</b><span>28 Aug</span></div><div class="current"><b>Guest operations</b><span>Today · Live</span></div><div><b>Final production</b><span>17 Sep</span></div><div><b>Doors open</b><span>18 Sep · 18:30</span></div></div></section>
+
+      <footer><span>© 2026 Solstice Events Co.</span><span>Async operations · HMAC verified · Replay protected</span></footer>
+    </main>
+  </div>
   <script src="/app.js"></script>
-</body></html>
+</body>
+</html>
