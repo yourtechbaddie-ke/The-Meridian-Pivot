@@ -35,6 +35,10 @@ CREATE TABLE IF NOT EXISTS processed_webhooks (
 );
 `);
 
+const columns = db.prepare("PRAGMA table_info(attendees)").all().map(c => c.name);
+if (!columns.includes('event_name')) db.exec("ALTER TABLE attendees ADD COLUMN event_name TEXT NOT NULL DEFAULT 'The Golden Hour Gala'");
+if (!columns.includes('ticket_type')) db.exec("ALTER TABLE attendees ADD COLUMN ticket_type TEXT NOT NULL DEFAULT 'General'");
+
 const count = db.prepare('SELECT COUNT(*) AS count FROM attendees').get().count;
 if (count === 0) {
   const attendees = [
