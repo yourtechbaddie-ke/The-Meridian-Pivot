@@ -1,138 +1,86 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NORTHSTAR — Inventory Atelier</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative&family=Playfair+Display:wght@400;700&family=Cormorant+Garamond:wght@400;700&family=Syne:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-    <script src="app.js" defer></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101B35">
+  <title>NORTHSTAR — The Digital Atelier</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">NORTHSTAR</div>
-        <ul class="nav-links">
-            <li>ALL</li>
-            <li>JACKETS</li>
-            <li>SWEATERS</li>
-            <li>DRESSES</li>
-            <li>DENIM</li>
-            <li>TRAINERS</li>
-            <li>ACCESSORIES</li>
-        </ul>
-        <div class="hamburger">&#9776;</div>
+  <div class="announcement">NORTHSTAR PRIVATE ATELIER <span>·</span> NAIROBI <span>·</span> CURATED INVENTORY INTELLIGENCE</div>
+  <header class="site-header">
+    <button class="menu-button" aria-label="Open navigation"><span></span><span></span></button>
+    <a class="wordmark" href="#top">NORTHSTAR <small>RETAIL CO.</small></a>
+    <div class="header-actions"><button class="header-link" data-scroll="collection">Collection</button><button class="bag-button" aria-label="Open selection">Selection <b id="selection-count">0</b></button></div>
+  </header>
+
+  <aside class="drawer" aria-hidden="true">
+    <button class="drawer-close" aria-label="Close">×</button>
+    <p class="eyebrow">THE DIGITAL ATELIER</p>
+    <h2>Move through<br><i>the collection.</i></h2>
+    <nav>
+      <button data-filter="All">All pieces</button><button data-filter="Jacket">Jackets</button><button data-filter="Sweater">Knitwear</button><button data-filter="Dress">Dresses</button><button data-filter="Cashmere Set">Cashmere sets</button><button data-filter="Denim Jeans">Denim</button><button data-filter="Trainers">Footwear</button><button data-filter="Accessories">Accessories</button>
     </nav>
-    
-    <aside class="side-drawer">
-        <button class="close-btn">✖</button>
-        <h2>Deep Inventory Navigation</h2>
-        <ul>
-            <li>All Categories</li>
-            <li>GraphQL Schema Explorer</li>
-            <li>Filter by Status</li>
-        </ul>
-    </aside>
+    <div class="drawer-note"><span>ATELIER NOTE</span><p>Inventory is presented as a visual buying room: discover, inspect, curate.</p></div>
+  </aside>
+  <div class="veil"></div>
 
-    <section class="hero-section">
-        <div class="hero-left">
-            <div class="hero-background"></div>
-            <h1>NORTHSTAR RETAIL CO.</h1>
-            <p class="tagline">Where Inventory Meets Couture</p>
-            <h3 class="animated-subtitle">25 Exclusive Items · Live GraphQL Sync · Real-Time Stock Intelligence</h3>
-            <button class="cta-button">EXPLORE COLLECTION</button>
-        </div>
-        <div class="hero-right">
-            <div class="dashboard-card">
-                <h2>LIVE INVENTORY PULSE</h2>
-                <div class="metrics">
-                    <div class="metric">
-                        <span class="count" data-count="25">0</span>
-                        <label>TOTAL ITEMS</label>
-                    </div>
-                    <div class="metric low-stock">
-                        <span class="count" data-count="5">0</span>
-                        <label>LOW STOCK</label>
-                    </div>
-                    <div class="metric out-of-stock">
-                        <span class="count" data-count="2">0</span>
-                        <label>OUT OF STOCK</label>
-                    </div>
-                </div>
-                <span class="graphql-badge">POWERED BY GRAPHQL</span>
-            </div>
-        </div>
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">THE MERIDIAN PIVOT / NORTHSTAR</p>
+        <h1>Where inventory<br><i>becomes desire.</i></h1>
+        <p class="hero-lede">A private digital atelier for discovering Northstar’s most considered pieces — with the clarity of an inventory system and the soul of a fashion house.</p>
+        <button class="primary-button" data-scroll="collection">Enter the collection <span>↘</span></button>
+      </div>
+      <div class="hero-art">
+        <div class="hero-image image-a"></div>
+        <div class="hero-image image-b"></div>
+        <div class="hero-stamp"><span>NS</span><small>ATELIER<br>NO. 01</small></div>
+      </div>
     </section>
 
-    <div class="stats-bar">
-        <div class="stat-card"><div class="number" data-count="40">0</div><div>JACKETS</div></div>
-        <div class="stat-card"><div class="number" data-count="50">0</div><div>SWEATERS</div></div>
-        <div class="stat-card"><div class="number" data-count="30">0</div><div>DRESSES</div></div>
-        <div class="stat-card"><div class="number" data-count="20">0</div><div>ACCESSORIES</div></div>
-    </div>
-
-    <section class="featured-carousel">
-        <h2>FEATURED EXCLUSIVES</h2>
-        <div class="carousel">
-            <!-- Carousel items will be rendered here dynamically -->
-        </div>
+    <section class="atelier-strip">
+      <div><span>01</span><strong>CURATED</strong><p>Pieces selected for presence.</p></div>
+      <div><span>02</span><strong>VISIBLE</strong><p>Stock clarity without the noise.</p></div>
+      <div><span>03</span><strong>INTELLIGENT</strong><p>Category, status and search in one room.</p></div>
+      <div><span>04</span><strong>PRIVATE</strong><p>An experience designed like an atelier.</p></div>
     </section>
 
-    <section class="filter-tabs">
-        <h2 class="collection-title">THE COLLECTION</h2>
-        <input type="text" class="search-input" placeholder="Search by SKU or name...">
-        <div class="filters">
-            <span class="filter-pill">ALL</span>
-            <span class="filter-pill">JACKET</span>
-            <span class="filter-pill">SWEATER</span>
-            <span class="filter-pill">CASHMERE SET</span>
-            <span class="filter-pill">DRESS</span>
-            <span class="filter-pill">SKIRT</span>
-            <span class="filter-pill">BLOUSE</span>
-            <span class="filter-pill">SHIRT</span>
-            <span class="filter-pill">CROCHETWEAR</span>
-            <span class="filter-pill">DENIM JEANS</span>
-            <span class="filter-pill">LEGINGS</span>
-            <span class="filter-pill">JERSEY</span>
-            <span class="filter-pill">TRAINERS</span>
-            <span class="filter-pill">SOCKS</span>
-            <span class="filter-pill">MARVIN</span>
-        </div>
+    <section class="pulse-section">
+      <div class="section-heading"><p class="eyebrow">LIVE INVENTORY PULSE</p><h2>The room, <i>right now.</i></h2><p>Northstar’s collection at a glance — presented as a premium retail intelligence layer.</p></div>
+      <div class="pulse-grid">
+        <article class="pulse-card pulse-main"><span class="pulse-label">TOTAL PIECES</span><strong id="total-items">25</strong><small>Across the current catalogue</small><div class="pulse-line"><i></i></div></article>
+        <article class="pulse-card"><span class="pulse-label">LOW STOCK</span><strong id="low-stock">3</strong><small>Worth a closer look</small></article>
+        <article class="pulse-card dark"><span class="pulse-label">OUT OF STOCK</span><strong id="out-stock">2</strong><small>Awaiting atelier attention</small></article>
+      </div>
     </section>
 
-    <section class="inventory-grid">
-        <!-- Inventory items will be rendered here dynamically -->
+    <section class="feature-section">
+      <div class="section-heading inline"><div><p class="eyebrow">FEATURED EXCLUSIVES</p><h2>Pieces with <i>presence.</i></h2></div><div class="carousel-controls"><button id="prev">←</button><button id="next">→</button></div></div>
+      <div class="featured-track" id="featured-track"></div>
     </section>
 
-    <section class="brand-story">
-        <div class="story-quote">
-            <h2>"Luxury is not a privilege. It's a standard."</h2>
-        </div>
-        <div class="story-text">
-            <p>Northstar Retail Co. is committed to redefining luxury through unparalleled quality and innovation.</p>
-        </div>
+    <section class="collection-section" id="collection">
+      <div class="collection-top"><div><p class="eyebrow">THE COLLECTION</p><h2>Curated <i>inventory.</i></h2></div><div class="search-wrap"><span>⌕</span><input id="search" type="search" placeholder="Search name, SKU or fabric"></div></div>
+      <div class="filter-row" id="filters"><button class="active" data-filter="All">All</button><button data-filter="Jacket">Jackets</button><button data-filter="Sweater">Knitwear</button><button data-filter="Dress">Dresses</button><button data-filter="Cashmere Set">Cashmere</button><button data-filter="Denim Jeans">Denim</button><button data-filter="Trainers">Trainers</button><button data-filter="Accessories">Accessories</button></div>
+      <div class="collection-meta"><span id="result-count">25 pieces</span><span>Sort: <button id="sort">Curated order ↕</button></span></div>
+      <div class="inventory-grid" id="inventory-grid"></div>
     </section>
 
-    <section class="graphql-indicator">
-        <h2>GRAPHQL ENGINE STATUS</h2>
-        <div class="indicators">
-            <div class="active-queries">Active Queries: <span class="pulse"></span></div>
-            <div class="cache-status">Cache Status: <span class="live-badge">LIVE</span></div>
-            <div class="last-sync">Last Sync: <span class="timestamp">Just now</span></div>
-            <div class="available-queries">
-                <span class="query-pill">getItem</span>
-                <span class="query-pill">getAllItems</span>
-                <span class="query-pill">getByCategory</span>
-                <span class="query-pill">getOutOfStock</span>
-                <span class="query-pill">getLowStock</span>
-            </div>
-        </div>
+    <section class="story-section">
+      <div class="story-image"></div>
+      <div class="story-copy"><p class="eyebrow">THE ATELIER PHILOSOPHY</p><h2>Luxury is not a privilege.<br><i>It is a standard.</i></h2><p>Northstar Retail Co. turns an inventory exercise into a considered digital buying room — balancing operational intelligence with the visual language of a private fashion house.</p><div class="story-signature">NORTHSTAR<br><small>RETAIL CO. / NAIROBI</small></div></div>
     </section>
 
-    <footer>
-        <p>NORTHSTAR RETAIL CO.</p>
-        <p class="tagline">The Meridian Pivot — Sprint 2 Prototype</p>
-        <hr class="accent-line">
-        <small>Powered by GraphQL + Apollo Server + Replit</small>
-    </footer>
+    <section class="engine-section"><div><p class="eyebrow">INTELLIGENCE LAYER</p><h2>Quietly <i>powerful.</i></h2></div><div class="engine-status"><div><span class="status-dot"></span><strong>CATALOGUE ENGINE</strong><small>READY</small></div><div><span class="status-dot"></span><strong>FILTER INDEX</strong><small>LIVE</small></div><div><span class="status-dot"></span><strong>STOCK SIGNAL</strong><small>LIVE</small></div></div></section>
+  </main>
+
+  <footer><div class="footer-brand">NORTHSTAR <span>RETAIL CO.</span></div><p>THE DIGITAL ATELIER · THE MERIDIAN PIVOT</p><div class="footer-meta"><span>NAIROBI</span><span>INVENTORY INTELLIGENCE</span><span>© 2026</span></div></footer>
 </body>
 </html>
